@@ -1,0 +1,593 @@
+# KAWE ROM HUB PREMIUM — Código Fonte Atualizado
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KAWE PIRATARIA</title>
+
+<style>
+:root{
+    --green:#22c55e;
+    --dark:#050805;
+    --card:#0b120b;
+    --border:#1f3524;
+    --text:#d1ffd9;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial, sans-serif;
+    background:linear-gradient(to bottom,#050805,#081108,#050805);
+    color:var(--text);
+}
+
+header{
+    background:#020402;
+    border-bottom:1px solid var(--green);
+    padding:15px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    position:sticky;
+    top:0;
+    z-index:1000;
+}
+
+.logo{
+    color:var(--green);
+    font-size:28px;
+    font-weight:bold;
+}
+
+nav{
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+nav a{
+    color:var(--green);
+    text-decoration:none;
+    transition:0.3s;
+    font-weight:bold;
+}
+
+nav a:hover{
+    color:white;
+}
+
+.hero{
+    padding:70px 20px;
+    text-align:center;
+    background:radial-gradient(circle at center,#123d1d 0%,#050805 70%);
+}
+
+.hero h1{
+    font-size:50px;
+    color:var(--green);
+    margin-bottom:20px;
+}
+
+.hero p{
+    font-size:18px;
+    max-width:800px;
+    margin:auto;
+    line-height:1.6;
+}
+
+.hero button{
+    margin-top:25px;
+}
+
+.search-box{
+    padding:20px;
+    text-align:center;
+}
+
+.search-box input{
+    width:90%;
+    max-width:700px;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    background:#101810;
+    color:var(--green);
+    outline:none;
+    font-size:16px;
+}
+
+.section-title{
+    font-size:28px;
+    color:var(--green);
+    margin:30px 20px 10px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:20px;
+    padding:20px;
+}
+
+.card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:18px;
+    overflow:hidden;
+    transition:0.3s;
+    box-shadow:0 0 15px rgba(0,0,0,0.5);
+}
+
+.card:hover{
+    transform:translateY(-5px) scale(1.02);
+    border-color:var(--green);
+}
+
+.card img{
+    width:100%;
+    height:160px;
+    object-fit:cover;
+}
+
+.card-content{
+    padding:15px;
+}
+
+.card h3{
+    color:var(--green);
+    margin-bottom:10px;
+}
+
+.card p{
+    font-size:14px;
+    line-height:1.5;
+    margin-bottom:15px;
+}
+
+button{
+    background:var(--green);
+    border:none;
+    padding:12px 18px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:bold;
+    width:100%;
+    transition:0.3s;
+}
+
+button:hover{
+    opacity:0.8;
+}
+
+.page{
+    display:none;
+    padding:20px;
+}
+
+.active{
+    display:block;
+}
+
+.detail-box{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:25px;
+    max-width:900px;
+    margin:auto;
+}
+
+.detail-box img{
+    width:100%;
+    border-radius:15px;
+    margin-bottom:20px;
+}
+
+.info-list{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:15px;
+    margin:20px 0;
+}
+
+.info-item{
+    background:#101810;
+    padding:15px;
+    border-radius:12px;
+    text-align:center;
+}
+
+.upload-area{
+    background:var(--card);
+    max-width:700px;
+    margin:auto;
+    padding:25px;
+    border-radius:20px;
+    border:1px solid var(--border);
+}
+
+.upload-area input,
+.upload-area textarea{
+    width:100%;
+    margin-top:10px;
+    margin-bottom:20px;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#101810;
+    color:white;
+}
+
+footer{
+    margin-top:40px;
+    padding:25px;
+    text-align:center;
+    border-top:1px solid var(--border);
+    color:#8fbf9a;
+}
+
+.tag{
+    display:inline-block;
+    background:#103118;
+    color:var(--green);
+    padding:5px 12px;
+    border-radius:20px;
+    margin-right:8px;
+    margin-top:8px;
+    font-size:13px;
+}
+
+@media(max-width:700px){
+.hero h1{
+font-size:35px;
+}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">KAWE ROM HUB 👑</div>
+
+    <nav>
+        <a href="#" onclick="showPage('home')">Início</a>
+        <a href="#" onclick="showPage('catalogo')">Jogos</a>
+        <a href="#" onclick="showPage('upload')">Adicionar</a>
+        <a href="#" onclick="showPage('sobre')">Sobre</a>
+    </nav>
+</header>
+
+<div id="home" class="page active">
+
+<section class="hero">
+    <h1>KAWE PIRATARIA</h1>
+
+    <p>
+        Biblioteca gamer premium com visual verde e preto.
+        Organize seus jogos favoritos de GBA em um catálogo moderno,
+        rápido e otimizado para celular e PC.
+    </p>
+
+    <button onclick="showPage('catalogo')">
+        VER CATÁLOGO
+    </button>
+</section>
+
+<div class="search-box">
+    <input type="text" id="search" placeholder="Buscar jogos..." onkeyup="buscar()">
+</div>
+
+<h2 class="section-title">🔥 Jogos Adicionados</h2>
+
+<div class="grid" id="lista">
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1200&auto=format&fit=crop">
+
+<div class="card-content">
+<h3>Pokemon Unbound</h3>
+
+<p>
+Hack ROM completa com novos sistemas, mapa expandido e dificuldade avançada.
+</p>
+
+<span class="tag">GBA</span>
+<span class="tag">PT-BR</span>
+<span class="tag">RPG</span>
+
+<br><br>
+
+<button onclick="detalhes(
+'Pokemon Unbound',
+'Hack ROM avançada com história completa, novos eventos e grande exploração.',
+'https://www.mediafire.com/file/ipj30houhnd86i3/PK_FR_%252528PT-BR%252529.zip/file',
+'4 MB',
+'RPG',
+'Offline'
+)">
+Download
+</button>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1542751110-97427bbecf20?q=80&w=1200&auto=format&fit=crop">
+
+<div class="card-content">
+<h3>Pokémon Emerald PT-BR</h3>
+
+<p>
+Versão traduzida em português baseada no clássico Pokémon Emerald.
+</p>
+
+<span class="tag">GBA</span>
+<span class="tag">Português</span>
+<span class="tag">Aventura</span>
+
+<br><br>
+
+<button onclick="detalhes(
+'Pokémon Emerald PT-BR',
+'Versão traduzida com gameplay clássica e região Hoenn completa.',
+'https://www.mediafire.com/file/yu8hepmdc12xgmv/PK+EMR+(PT-BR).zip/file',
+'16 MB',
+'RPG',
+'Offline'
+)">
+Download
+</button>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1511882150382-421056c89033?q=80&w=1200&auto=format&fit=crop">
+
+<div class="card-content">
+<h3>Pokémon Sapphire PT-BR</h3>
+
+<p>
+Clássico Pokémon Sapphire em português com suporte para emuladores.
+</p>
+
+<span class="tag">GBA</span>
+<span class="tag">PT-BR</span>
+<span class="tag">Retro</span>
+
+<br><br>
+
+<button onclick="detalhes(
+'Pokémon Sapphire PT-BR',
+'Versão clássica portátil com região Hoenn e batalhas lendárias.',
+'https://www.mediafire.com/file/032wa4o5u5rczcq/Pokemon_Sapphire_PT-BR%25255BLukaBat%25255D.zip/file',
+'16 MB',
+'RPG',
+'Offline'
+)">
+Download
+</button>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?q=80&w=1200&auto=format&fit=crop">
+
+<div class="card-content">
+<h3>Ru3y Português</h3>
+
+<p>
+ROM personalizada em português com experiência retro para GBA.
+</p>
+
+<span class="tag">GBA</span>
+<span class="tag">Custom</span>
+<span class="tag">Offline</span>
+
+<br><br>
+
+<button onclick="detalhes(
+'Ru3y Português',
+'ROM personalizada traduzida com experiência portátil clássica.',
+'https://www.mediafire.com/file/omec55dogogzo9m/Ru3y_Portugues%5Bheypikachu.com%5D.HEYPIKACHU/file',
+'8 MB',
+'Retro',
+'Offline'
+)">
+Download
+</button>
+</div>
+</div>
+
+</div>
+</div>
+
+<div id="catalogo" class="page">
+<h2 class="section-title">🎮 Biblioteca Gamer</h2>
+
+<div class="grid" id="catalogGrid"></div>
+</div>
+
+<div id="detalhes" class="page">
+
+<div class="detail-box">
+<img id="detailImg" src="https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1200&auto=format&fit=crop">
+
+<h1 id="titulo"></h1>
+
+<p id="desc"></p>
+
+<div class="info-list">
+<div class="info-item">
+<h3>Tamanho</h3>
+<p id="size"></p>
+</div>
+
+<div class="info-item">
+<h3>Categoria</h3>
+<p id="genre"></p>
+</div>
+
+<div class="info-item">
+<h3>Modo</h3>
+<p id="mode"></p>
+</div>
+</div>
+
+<button id="downloadBtn">
+Baixar Arquivo
+</button>
+
+<br><br>
+
+<button onclick="showPage('home')">
+Voltar
+</button>
+
+</div>
+</div>
+
+<div id="upload" class="page">
+
+<div class="upload-area">
+<h2>➕ Adicionar Novo Jogo</h2>
+
+<input type="text" id="nome" placeholder="Nome do jogo">
+
+<textarea id="descricao" placeholder="Descrição"></textarea>
+
+<input type="text" id="link" placeholder="Nome do arquivo ou link">
+
+<button onclick="addItem()">
+Adicionar ao Catálogo
+</button>
+</div>
+</div>
+
+<div id="sobre" class="page">
+<h2 class="section-title">📖 Sobre</h2>
+
+<div class="detail-box">
+<p>
+O KAWE ROM HUB PREMIUM foi criado para organizar bibliotecas gamer retrô com visual moderno.
+</p>
+
+<br>
+
+<p>
+O site possui:
+</p>
+
+<br>
+
+<ul>
+<li>✔ Tema verde e preto premium</li>
+<li>✔ Sistema de busca</li>
+<li>✔ Biblioteca de jogos</li>
+<li>✔ Sistema de detalhes</li>
+<li>✔ Compatível com celular</li>
+<li>✔ Visual gamer moderno</li>
+<li>✔ Sistema para adicionar novos jogos</li>
+</ul>
+
+<br>
+
+<p>
+⚠ Utilize apenas jogos e ROMs que você tenha permissão legal para usar.
+</p>
+</div>
+</div>
+
+<footer>
+KAWE ROM HUB PREMIUM © 2026 👑
+</footer>
+
+<script>
+function showPage(page){
+    document.querySelectorAll('.page').forEach(p=>{
+        p.classList.remove('active');
+    });
+
+    document.getElementById(page).classList.add('active');
+}
+
+function detalhes(nome,desc,arquivo,size,genre,mode){
+
+    document.getElementById('titulo').innerText = nome;
+    document.getElementById('desc').innerText = desc;
+    document.getElementById('size').innerText = size;
+    document.getElementById('genre').innerText = genre;
+    document.getElementById('mode').innerText = mode;
+
+    document.getElementById('downloadBtn').onclick = ()=>{
+        let link = document.createElement('a');
+        link.href = arquivo;
+        link.download = arquivo;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    showPage('detalhes');
+}
+
+function buscar(){
+
+    let input = document.getElementById('search').value.toLowerCase();
+
+    let cards = document.querySelectorAll('.card');
+
+    cards.forEach(card=>{
+
+        let texto = card.innerText.toLowerCase();
+
+        if(texto.includes(input)){
+            card.style.display='block';
+        }else{
+            card.style.display='none';
+        }
+    });
+}
+
+function addItem(){
+
+    let nome = document.getElementById('nome').value;
+    let descricao = document.getElementById('descricao').value;
+    let link = document.getElementById('link').value;
+
+    if(nome === '' || descricao === '' || link === ''){
+        alert('Preencha todos os campos');
+        return;
+    }
+
+    let novo = `
+    <div class="card">
+    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1200&auto=format&fit=crop">
+
+    <div class="card-content">
+    <h3>${nome}</h3>
+
+    <p>${descricao}</p>
+
+    <span class="tag">NOVO</span>
+
+    <br><br>
+
+    <button onclick="detalhes('${nome}','${descricao}','${link}','Custom','Gamer','Offline')">
+    Download
+    </button>
+
+    </div>
+    </div>
+    `;
+
+    document.getElementById('
+```
