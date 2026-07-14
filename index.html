@@ -1,593 +1,1799 @@
-# KAWE ROM HUB PREMIUM — Código Fonte Atualizado
 
-```html
+
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAWE PIRATARIA</title>
+<title>KAWE PIRATARIA OFICIAL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
     --green:#22c55e;
+    --green-bright:#4ade80;
+    --green-glow:rgba(34,197,94,.35);
     --dark:#050805;
-    --card:#0b120b;
+    --card:#0c130d;
     --border:#1f3524;
-    --text:#d1ffd9;
+    --border-bright:#2d5136;
+    --text:#e6ffec;
+    --text-dim:#8fbf9a;
+    --danger:#ef4444;
 }
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+*{margin:0;padding:0;box-sizing:border-box;}
+*::selection{background:var(--green);color:#000;}
+html{scroll-behavior:smooth;}
 
 body{
-    font-family:Arial, sans-serif;
-    background:linear-gradient(to bottom,#050805,#081108,#050805);
+    font-family:'Inter',system-ui,sans-serif;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(34,197,94,.08), transparent 60%),
+      radial-gradient(900px 500px at -10% 30%, rgba(34,197,94,.06), transparent 60%),
+      linear-gradient(180deg,#050805,#070c07 40%,#050805);
     color:var(--text);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
 }
 
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-track{background:#050805;}
+::-webkit-scrollbar-thumb{background:linear-gradient(var(--green),#0f7a34);border-radius:10px;border:2px solid #050805;}
+::-webkit-scrollbar-thumb:hover{background:var(--green-bright);}
+
+/* ============ ICONS ============ */
+.ic{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;display:inline-block;vertical-align:-3px;}
+.ic-sm{width:14px;height:14px;}
+.ic-md{width:20px;height:20px;}
+.ic-lg{width:28px;height:28px;}
+.ic-xl{width:34px;height:34px;}
+
+/* Header */
 header{
-    background:#020402;
-    border-bottom:1px solid var(--green);
-    padding:15px 20px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    flex-wrap:wrap;
-    position:sticky;
-    top:0;
-    z-index:1000;
+    background:rgba(4,7,4,.75);
+    backdrop-filter:blur(18px) saturate(140%);
+    -webkit-backdrop-filter:blur(18px) saturate(140%);
+    border-bottom:1px solid rgba(34,197,94,.25);
+    padding:16px 28px;
+    display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:14px;position:sticky;top:0;z-index:1000;
 }
-
+.logo-wrap{display:flex;align-items:center;gap:14px;}
 .logo{
-    color:var(--green);
-    font-size:28px;
-    font-weight:bold;
+    font-family:'Space Grotesk',sans-serif;
+    color:var(--green);font-size:24px;font-weight:700;letter-spacing:.5px;
+    display:flex;align-items:center;gap:10px;
+    text-shadow:0 0 20px var(--green-glow);
 }
-
-nav{
-    display:flex;
-    gap:15px;
-    flex-wrap:wrap;
+.logo .ic{width:26px;height:26px;filter:drop-shadow(0 0 10px var(--green-glow));}
+.admin-btn{
+    background:rgba(34,197,94,.1);color:var(--green-bright);
+    border:1px solid rgba(34,197,94,.35);
+    padding:7px 14px;border-radius:999px;
+    font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+    cursor:pointer;transition:all .25s;
+    display:inline-flex;align-items:center;gap:6px;width:auto;
 }
+.admin-btn:hover{background:rgba(34,197,94,.2);border-color:var(--green);box-shadow:0 0 20px rgba(34,197,94,.3);}
+.admin-btn.active{background:var(--green);color:#03170a;}
+.admin-btn .ic{width:14px;height:14px;}
 
+nav{display:flex;gap:4px;align-items:center;flex-wrap:nowrap;overflow-x:auto;max-width:100%;scrollbar-width:thin;}
+nav::-webkit-scrollbar{height:4px;}
 nav a{
-    color:var(--green);
-    text-decoration:none;
-    transition:0.3s;
-    font-weight:bold;
+    color:var(--text-dim);text-decoration:none;font-weight:600;font-size:13px;
+    padding:7px 12px;border-radius:10px;transition:all .25s;cursor:pointer;white-space:nowrap;
 }
+nav a:hover{color:var(--green);background:rgba(34,197,94,.08);}
+nav a.active-cat{color:var(--green);background:rgba(34,197,94,.12);}
 
-nav a:hover{
-    color:white;
+/* Hamburger */
+.hamburger{
+    background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.3);
+    color:var(--green-bright);width:40px;height:40px;border-radius:12px;
+    display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
+    padding:0;flex-shrink:0;transition:all .25s;
 }
+.hamburger:hover{background:rgba(34,197,94,.18);box-shadow:0 0 18px rgba(34,197,94,.25);transform:none;filter:none;}
+.hamburger .ic{width:20px;height:20px;}
 
-.hero{
-    padding:70px 20px;
-    text-align:center;
-    background:radial-gradient(circle at center,#123d1d 0%,#050805 70%);
+/* Drawer */
+.drawer-overlay{position:fixed;inset:0;background:rgba(2,5,2,.7);backdrop-filter:blur(6px);z-index:1500;display:none;}
+.drawer-overlay.show{display:block;animation:overlayIn .25s;}
+.drawer{
+    position:fixed;top:0;left:0;bottom:0;width:min(320px,85vw);
+    background:linear-gradient(180deg,#0c130d,#050805);
+    border-right:1px solid var(--border-bright);z-index:1600;
+    transform:translateX(-100%);transition:transform .35s cubic-bezier(.2,.9,.3,1.1);
+    padding:22px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;
 }
+.drawer.show{transform:translateX(0);box-shadow:20px 0 60px -10px rgba(0,0,0,.6);}
+.drawer-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.drawer-head h3{font-family:'Space Grotesk',sans-serif;color:var(--green-bright);font-size:16px;}
+.drawer a{
+    color:var(--text);text-decoration:none;padding:12px 14px;border-radius:10px;
+    font-weight:600;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:10px;
+    border:1px solid transparent;transition:all .2s;
+}
+.drawer a:hover{background:rgba(34,197,94,.08);border-color:var(--border);color:var(--green-bright);}
+.drawer a .ic{width:16px;height:16px;color:var(--green);}
+.close-x{background:transparent;border:none;color:var(--text-dim);cursor:pointer;width:32px;height:32px;padding:0;border-radius:8px;}
+.close-x:hover{background:rgba(255,255,255,.05);color:var(--text);transform:none;filter:none;box-shadow:none;}
 
+/* Dynamic admin form blocks */
+.dyn-section{
+    background:rgba(16,24,16,.5);border:1px solid var(--border);border-radius:14px;
+    padding:14px;margin:14px 0;
+}
+.dyn-section > .dyn-head{
+    display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:10px;flex-wrap:wrap;
+}
+.dyn-section > .dyn-head h4{
+    font-family:'Space Grotesk',sans-serif;color:var(--green-bright);font-size:14px;
+    display:flex;align-items:center;gap:8px;letter-spacing:.3px;
+}
+.dyn-section > .dyn-head h4 .ic{color:var(--green);width:16px;height:16px;}
+.dyn-section > .dyn-head button{width:auto;padding:8px 14px;font-size:12px;}
+.dyn-item{
+    background:rgba(5,8,5,.6);border:1px solid var(--border);border-radius:12px;
+    padding:12px;margin-bottom:10px;position:relative;
+}
+.dyn-item label{margin-top:4px;}
+.dyn-item input,.dyn-item textarea{margin-bottom:8px;}
+.dyn-item .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:520px){.dyn-item .row2{grid-template-columns:1fr;}}
+.dyn-item .remove-x{
+    position:absolute;top:8px;right:8px;
+    background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);
+    color:#fca5a5;width:28px;height:28px;padding:0;border-radius:8px;
+    display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.dyn-item .remove-x:hover{background:rgba(239,68,68,.25);transform:none;filter:none;box-shadow:none;}
+.dyn-item .remove-x .ic{width:14px;height:14px;}
+.sub-links{margin-top:8px;padding-left:12px;border-left:2px solid var(--border);}
+.sub-link-row{display:grid;grid-template-columns:1fr 2fr auto;gap:8px;margin-bottom:6px;align-items:center;}
+@media(max-width:520px){.sub-link-row{grid-template-columns:1fr;}}
+.sub-link-row input{margin-bottom:0;padding:10px 12px;font-size:13px;}
+.mini-btn{width:auto;padding:8px 10px;font-size:12px;}
+
+/* Detail extras */
+.extra-block{margin-top:22px;}
+.extra-block h3{font-family:'Space Grotesk',sans-serif;font-size:16px;color:var(--green-bright);margin-bottom:10px;display:flex;align-items:center;gap:8px;letter-spacing:-.2px;}
+.extra-block h3 .ic{color:var(--green);width:18px;height:18px;}
+.link-chip{
+    display:inline-flex;align-items:center;gap:8px;
+    background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.3);
+    color:var(--green-bright);text-decoration:none;
+    padding:10px 14px;border-radius:12px;margin:4px 6px 4px 0;font-size:13px;font-weight:600;
+    transition:all .2s;
+}
+.link-chip:hover{background:rgba(34,197,94,.18);border-color:var(--green);transform:translateY(-1px);}
+.server-box{
+    background:rgba(16,24,16,.6);border:1px solid var(--border);border-radius:14px;
+    padding:14px;margin-bottom:10px;
+}
+.server-box h4{font-family:'Space Grotesk',sans-serif;color:var(--text);font-size:14px;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.server-box h4 .ic{color:var(--green);width:16px;height:16px;}
+.iframe-wrap{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:#000;margin-bottom:10px;}
+.iframe-wrap iframe{width:100%;height:420px;border:0;display:block;}
+.iframe-label{font-size:12px;color:var(--text-dim);margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+
+/* Hero */
+.hero{padding:100px 24px 90px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{
+    content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(600px 300px at 50% 40%, rgba(34,197,94,.18), transparent 70%),
+      repeating-linear-gradient(45deg, transparent 0 22px, rgba(34,197,94,.04) 22px 23px);
+    pointer-events:none;
+}
+.hero-badge{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:6px 14px;border-radius:999px;
+    background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);
+    color:var(--green-bright);font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
+    margin-bottom:22px;position:relative;z-index:1;
+}
+.hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green);animation:pulse 1.6s ease-in-out infinite;}
+@keyframes pulse{50%{opacity:.4;transform:scale(.85);}}
 .hero h1{
-    font-size:50px;
-    color:var(--green);
-    margin-bottom:20px;
+    font-family:'Space Grotesk',sans-serif;
+    font-size:clamp(44px,7vw,86px);font-weight:700;line-height:1;letter-spacing:-2px;
+    background:linear-gradient(180deg,#e6ffec 0%,var(--green-bright) 60%,var(--green) 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+    margin-bottom:22px;position:relative;z-index:1;text-shadow:0 0 60px rgba(34,197,94,.25);
 }
+.hero p{font-size:17px;max-width:640px;margin:0 auto;line-height:1.65;color:var(--text-dim);position:relative;z-index:1;}
+.hero button{margin-top:32px;width:auto;padding:14px 32px;position:relative;z-index:1;box-shadow:0 10px 40px -10px var(--green-glow);display:inline-flex;align-items:center;gap:10px;}
 
-.hero p{
-    font-size:18px;
-    max-width:800px;
-    margin:auto;
-    line-height:1.6;
-}
-
-.hero button{
-    margin-top:25px;
-}
-
-.search-box{
-    padding:20px;
-    text-align:center;
-}
-
+/* Search */
+.search-box{padding:8px 24px 32px;display:flex;justify-content:center;position:relative;}
+.search-wrap{position:relative;width:100%;max-width:680px;}
+.search-wrap .ic{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--text-dim);pointer-events:none;}
 .search-box input{
-    width:90%;
-    max-width:700px;
-    padding:15px;
-    border:none;
-    border-radius:12px;
-    background:#101810;
-    color:var(--green);
-    outline:none;
-    font-size:16px;
+    width:100%;padding:16px 20px 16px 46px;
+    border:1px solid var(--border);border-radius:14px;
+    background:rgba(16,24,16,.6);color:var(--text);outline:none;
+    font-size:15px;font-family:inherit;transition:all .25s;backdrop-filter:blur(8px);
 }
+.search-box input::placeholder{color:var(--text-dim);}
+.search-box input:focus{border-color:var(--green);background:rgba(16,24,16,.9);box-shadow:0 0 0 4px rgba(34,197,94,.12);}
 
+/* Section title */
 .section-title{
-    font-size:28px;
-    color:var(--green);
-    margin:30px 20px 10px;
+    font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;
+    color:var(--text);margin:40px 28px 18px;
+    display:flex;align-items:center;gap:12px;letter-spacing:-.5px;
 }
+.section-title .ic{color:var(--green);width:24px;height:24px;}
+.section-title::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
 
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-    gap:20px;
-    padding:20px;
-}
-
+/* Grid & Cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:22px;padding:12px 28px 40px;}
 .card{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:18px;
-    overflow:hidden;
-    transition:0.3s;
-    box-shadow:0 0 15px rgba(0,0,0,0.5);
+    background:linear-gradient(180deg,var(--card),#080d09);
+    border:1px solid var(--border);border-radius:18px;overflow:hidden;
+    transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .3s,box-shadow .3s;
+    position:relative;display:flex;flex-direction:column;
 }
+.card::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(34,197,94,.06));opacity:0;transition:opacity .3s;pointer-events:none;}
+.card:hover{transform:translateY(-6px);border-color:var(--green);box-shadow:0 20px 50px -20px var(--green-glow),0 0 0 1px rgba(34,197,94,.2);}
+.card:hover::before{opacity:1;}
+.card-media{position:relative;overflow:hidden;}
+.card-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(5,8,5,.9));}
+.card img{width:100%;height:180px;object-fit:cover;display:block;transition:transform .6s ease;}
+.card:hover img{transform:scale(1.08);}
+.card-content{padding:18px 18px 20px;display:flex;flex-direction:column;flex:1;}
+.card h3{font-family:'Space Grotesk',sans-serif;color:var(--text);font-size:18px;font-weight:700;margin-bottom:8px;letter-spacing:-.3px;}
+.card p{font-size:13.5px;line-height:1.55;color:var(--text-dim);margin-bottom:14px;flex:1;}
+.card button{display:inline-flex;align-items:center;justify-content:center;gap:8px;}
 
-.card:hover{
-    transform:translateY(-5px) scale(1.02);
-    border-color:var(--green);
-}
-
-.card img{
-    width:100%;
-    height:160px;
-    object-fit:cover;
-}
-
-.card-content{
-    padding:15px;
-}
-
-.card h3{
-    color:var(--green);
-    margin-bottom:10px;
-}
-
-.card p{
-    font-size:14px;
-    line-height:1.5;
-    margin-bottom:15px;
-}
-
+/* Buttons */
 button{
-    background:var(--green);
-    border:none;
-    padding:12px 18px;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:bold;
-    width:100%;
-    transition:0.3s;
+    background:linear-gradient(180deg,var(--green-bright),var(--green));
+    color:#03170a;border:none;padding:12px 18px;border-radius:11px;cursor:pointer;
+    font-weight:700;font-size:14px;font-family:inherit;width:100%;
+    transition:transform .2s,box-shadow .25s,filter .2s;letter-spacing:.2px;
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
 }
+button:hover{transform:translateY(-1px);filter:brightness(1.08);box-shadow:0 8px 24px -8px var(--green-glow);}
+button:active{transform:translateY(0);}
+.btn-secondary{background:transparent;color:var(--green);border:1px solid var(--border-bright);}
+.btn-secondary:hover{background:rgba(34,197,94,.08);}
+.btn-danger{background:linear-gradient(180deg,#f87171,var(--danger));color:#fff;}
 
-button:hover{
-    opacity:0.8;
-}
+/* Pages */
+.page{display:none;padding:16px 0 40px;animation:fadeIn .4s ease;}
+.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
 
-.page{
-    display:none;
-    padding:20px;
-}
-
-.active{
-    display:block;
-}
-
+/* Detail */
 .detail-box{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:20px;
-    padding:25px;
-    max-width:900px;
-    margin:auto;
+    background:linear-gradient(180deg,var(--card),#080d09);
+    border:1px solid var(--border);border-radius:22px;padding:32px;
+    max-width:920px;margin:20px auto;box-shadow:0 30px 80px -40px rgba(0,0,0,.8);
 }
+.detail-box img{width:100%;border-radius:16px;margin-bottom:24px;max-height:340px;object-fit:cover;border:1px solid var(--border);}
+.detail-box h1{font-family:'Space Grotesk',sans-serif;font-size:34px;letter-spacing:-1px;color:var(--text);margin-bottom:12px;}
+.detail-box > p{color:var(--text-dim);line-height:1.7;font-size:15px;}
+.info-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin:24px 0;}
+.info-item{background:rgba(16,24,16,.6);padding:16px;border-radius:14px;text-align:center;border:1px solid var(--border);}
+.info-item h3{font-size:11px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px;}
+.info-item p{color:var(--green-bright);font-weight:700;font-size:16px;}
 
-.detail-box img{
-    width:100%;
-    border-radius:15px;
-    margin-bottom:20px;
-}
-
-.info-list{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:15px;
-    margin:20px 0;
-}
-
-.info-item{
-    background:#101810;
-    padding:15px;
-    border-radius:12px;
-    text-align:center;
-}
-
+/* Forms */
 .upload-area{
-    background:var(--card);
-    max-width:700px;
-    margin:auto;
-    padding:25px;
+    background:linear-gradient(180deg,var(--card),#080d09);
+    max-width:640px;margin:30px auto;padding:32px;border-radius:22px;border:1px solid var(--border);
+}
+.upload-area h2{font-family:'Space Grotesk',sans-serif;font-size:24px;margin-bottom:20px;color:var(--text);letter-spacing:-.5px;}
+
+/* Upload gate (dropzone) */
+.up-gate{
+    margin:18px auto;max-width:820px;
+    background:radial-gradient(circle at 50% 0%,rgba(34,197,94,.12),transparent 70%),#000;
+    border:2px dashed var(--green);
     border-radius:20px;
-    border:1px solid var(--border);
-}
-
-.upload-area input,
-.upload-area textarea{
-    width:100%;
-    margin-top:10px;
-    margin-bottom:20px;
-    padding:12px;
-    border:none;
-    border-radius:10px;
-    background:#101810;
-    color:white;
-}
-
-footer{
-    margin-top:40px;
-    padding:25px;
+    padding:56px 24px;
     text-align:center;
-    border-top:1px solid var(--border);
-    color:#8fbf9a;
+    cursor:pointer;
+    transition:all .25s ease;
+    box-shadow:0 0 0 1px rgba(34,197,94,.15) inset,0 20px 60px -20px var(--green-glow);
+}
+.up-gate:hover,.up-gate.drag{
+    border-color:var(--green-bright);
+    background:radial-gradient(circle at 50% 0%,rgba(34,197,94,.22),transparent 70%),#000;
+    transform:translateY(-2px);
+    box-shadow:0 0 0 1px rgba(74,222,128,.35) inset,0 30px 80px -20px var(--green-glow);
+}
+.up-gate-inner{display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--text);}
+.up-gate-icon{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;background:rgba(34,197,94,.15);border:1px solid var(--green);box-shadow:0 0 30px var(--green-glow);}
+.up-gate-icon .ic{width:34px;height:34px;color:var(--green-bright);}
+.up-gate h3{font-family:'Space Grotesk',sans-serif;font-size:22px;color:var(--green-bright);letter-spacing:-.3px;margin:4px 0;}
+.up-gate p{color:var(--text-dim);font-size:14px;max-width:520px;}
+.up-gate-hint{margin-top:8px;font-size:11px;letter-spacing:2px;color:var(--green);opacity:.7;}
+.up-file-chip{display:inline-flex;align-items:center;gap:8px;background:rgba(34,197,94,.1);border:1px solid var(--border-bright);color:var(--green-bright);padding:6px 12px;border-radius:999px;font-size:12px;margin:4px 6px 0 0;}
+
+input[type=text],input[type=url],input[type=password],textarea{
+    width:100%;margin-top:6px;margin-bottom:16px;padding:14px 16px;
+    border:1px solid var(--border);border-radius:12px;
+    background:rgba(16,24,16,.6);color:var(--text);
+    font-family:inherit;font-size:14px;outline:none;transition:all .2s;
+}
+textarea{min-height:110px;resize:vertical;}
+input:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 4px rgba(34,197,94,.12);}
+label{display:block;font-size:12px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.8px;margin-top:8px;}
+
+/* Tags */
+.tag{
+    display:inline-block;background:rgba(34,197,94,.1);color:var(--green-bright);
+    padding:4px 10px;border-radius:999px;margin-right:6px;margin-bottom:12px;
+    font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;
+    border:1px solid rgba(34,197,94,.25);
 }
 
-.tag{
-    display:inline-block;
-    background:#103118;
-    color:var(--green);
-    padding:5px 12px;
-    border-radius:20px;
-    margin-right:8px;
-    margin-top:8px;
-    font-size:13px;
+footer{margin-top:60px;padding:32px 24px;text-align:center;border-top:1px solid var(--border);color:var(--text-dim);font-size:13px;letter-spacing:.5px;background:rgba(4,7,4,.5);display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;}
+footer .ic{color:var(--green);width:16px;height:16px;}
+
+#sobre ul{list-style:none;padding:0;}
+#sobre li{padding:10px 0;border-bottom:1px dashed var(--border);color:var(--text);font-size:14.5px;display:flex;align-items:center;gap:10px;}
+#sobre li:last-child{border-bottom:none;}
+#sobre li .ic{color:var(--green);width:16px;height:16px;}
+
+/* MODAL */
+.modal-overlay{
+    position:fixed;inset:0;background:rgba(2,5,2,.85);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    display:none;align-items:center;justify-content:center;
+    z-index:2000;padding:20px;animation:overlayIn .3s ease;
 }
+.modal-overlay.show{display:flex;}
+@keyframes overlayIn{from{opacity:0;}to{opacity:1;}}
+.modal{
+    background:linear-gradient(180deg,#0c130d,#050805);
+    border:1px solid var(--border-bright);border-radius:22px;padding:36px;
+    width:100%;max-width:420px;
+    box-shadow:0 30px 80px -20px rgba(0,0,0,.8),0 0 0 1px rgba(34,197,94,.15),0 0 60px -20px var(--green-glow);
+    animation:modalIn .35s cubic-bezier(.2,.9,.3,1.1);text-align:center;
+}
+@keyframes modalIn{from{opacity:0;transform:scale(.9) translateY(10px);}to{opacity:1;transform:none;}}
+.modal h2{font-family:'Space Grotesk',sans-serif;font-size:24px;color:var(--text);margin-bottom:6px;letter-spacing:-.5px;}
+.modal p.hint{color:var(--text-dim);font-size:13px;margin-bottom:22px;}
+.pin-inputs{display:flex;gap:10px;justify-content:center;margin-bottom:22px;}
+.pin-inputs input{
+    width:56px;height:64px;text-align:center;
+    font-size:26px;font-weight:700;font-family:'Space Grotesk',sans-serif;
+    color:var(--green-bright);
+    background:rgba(16,24,16,.8);
+    border:1px solid var(--border);border-radius:14px;margin:0;padding:0;transition:all .2s;
+}
+.pin-inputs input:focus{border-color:var(--green);box-shadow:0 0 0 4px rgba(34,197,94,.15),0 0 20px var(--green-glow);outline:none;}
+.pin-inputs.error input{border-color:var(--danger);animation:shake .4s;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+.modal-actions{display:flex;gap:10px;}
+.modal-icon{
+    width:64px;height:64px;margin:0 auto 16px;
+    display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(circle,rgba(34,197,94,.25),transparent 70%);
+    border-radius:50%;color:var(--green-bright);
+}
+.modal-icon .ic{width:32px;height:32px;}
+
+/* ADMIN PANEL */
+.admin-shell{display:none;max-width:1200px;margin:20px auto;padding:0 20px;}
+.admin-shell.show{display:block;}
+.admin-header{
+    display:flex;align-items:center;justify-content:space-between;
+    flex-wrap:wrap;gap:16px;
+    background:linear-gradient(135deg,rgba(34,197,94,.12),rgba(34,197,94,.02));
+    border:1px solid var(--border-bright);
+    padding:22px 26px;border-radius:20px;margin-bottom:22px;
+    position:relative;overflow:hidden;
+}
+.admin-header::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent 0 12px,rgba(34,197,94,.03) 12px 13px);pointer-events:none;}
+.admin-title{font-family:'Space Grotesk',sans-serif;font-size:22px;color:var(--text);letter-spacing:-.5px;display:flex;align-items:center;gap:12px;position:relative;}
+.admin-title .crown{color:var(--green);text-shadow:0 0 20px var(--green-glow);display:inline-flex;}
+.admin-title .crown .ic{width:26px;height:26px;}
+.admin-header-actions{display:flex;gap:10px;flex-wrap:wrap;position:relative;}
+.admin-header-actions button{width:auto;padding:10px 18px;font-size:13px;}
+
+.admin-tabs{display:flex;gap:6px;background:rgba(16,24,16,.5);padding:6px;border-radius:14px;border:1px solid var(--border);margin-bottom:22px;overflow-x:auto;}
+.admin-tab{
+    flex:1;min-width:120px;padding:10px 16px;border-radius:10px;text-align:center;cursor:pointer;
+    color:var(--text-dim);font-weight:600;font-size:13px;transition:all .2s;
+    background:transparent;border:none;
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+}
+.admin-tab:hover{color:var(--green);background:rgba(34,197,94,.05);box-shadow:none;transform:none;filter:none;}
+.admin-tab.active{background:linear-gradient(180deg,var(--green-bright),var(--green));color:#03170a;box-shadow:0 4px 16px -6px var(--green-glow);}
+
+.admin-panel{
+    background:linear-gradient(180deg,var(--card),#080d09);
+    border:1px solid var(--border);border-radius:20px;padding:26px;display:none;
+}
+.admin-panel.active{display:block;animation:fadeIn .3s;}
+.admin-panel h3{font-family:'Space Grotesk',sans-serif;font-size:18px;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.admin-panel h3 .ic{color:var(--green);}
+
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+@media(max-width:820px){.admin-grid{grid-template-columns:1fr;}}
+
+.item-row{
+    display:flex;align-items:center;gap:14px;
+    background:rgba(16,24,16,.6);border:1px solid var(--border);border-radius:14px;
+    padding:12px;margin-bottom:10px;transition:all .2s;
+}
+.item-row:hover{border-color:var(--border-bright);background:rgba(16,24,16,.9);}
+.item-thumb{width:56px;height:56px;border-radius:10px;object-fit:cover;flex-shrink:0;background:#000;}
+.item-info{flex:1;min-width:0;}
+.item-info h4{font-family:'Space Grotesk',sans-serif;font-size:15px;color:var(--text);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.item-info small{color:var(--text-dim);font-size:12px;}
+.item-actions{display:flex;gap:6px;}
+.item-actions button{width:auto;padding:8px 10px;font-size:12px;}
+
+.empty-state{text-align:center;padding:40px 20px;color:var(--text-dim);border:1px dashed var(--border);border-radius:14px;}
+
+.backup-box{background:rgba(16,24,16,.6);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:14px;}
+.backup-box h4{font-family:'Space Grotesk',sans-serif;color:var(--green-bright);margin-bottom:8px;font-size:15px;display:flex;align-items:center;gap:8px;}
+.backup-box h4 .ic{color:var(--green-bright);}
+.backup-box.danger h4{color:#f87171;}
+.backup-box.danger h4 .ic{color:#f87171;}
+.backup-box p{color:var(--text-dim);font-size:13px;line-height:1.55;margin-bottom:14px;}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:20px;}
+.stat{background:rgba(16,24,16,.6);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center;}
+.stat .num{font-family:'Space Grotesk',sans-serif;font-size:28px;color:var(--green-bright);font-weight:700;}
+.stat .lbl{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-top:4px;}
+
+.toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);
+    background:linear-gradient(180deg,var(--green-bright),var(--green));
+    color:#03170a;padding:14px 22px;border-radius:12px;
+    font-weight:700;font-size:14px;box-shadow:0 20px 40px -10px var(--green-glow);
+    z-index:3000;opacity:0;transition:all .35s cubic-bezier(.2,.9,.3,1.1);
+    max-width:90%;display:inline-flex;align-items:center;gap:10px;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.danger{background:linear-gradient(180deg,#f87171,var(--danger));color:#fff;}
 
 @media(max-width:700px){
-.hero h1{
-font-size:35px;
+    header{padding:14px 18px;}
+    .logo{font-size:20px;}
+    .hero{padding:70px 20px 60px;}
+    .grid{padding:12px 18px 32px;gap:16px;}
+    .section-title{margin:32px 18px 14px;font-size:22px;}
+    .detail-box,.upload-area,.modal{padding:22px;}
+    .pin-inputs input{width:48px;height:56px;font-size:22px;}
 }
-}
+
+/* ============ INTRO OVERLAYS ============ */
+.intro-overlay{position:fixed;inset:0;z-index:5000;background:radial-gradient(1000px 500px at 50% 40%, rgba(34,197,94,.22), transparent 70%),linear-gradient(180deg,#020402,#050805 50%,#020402);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;overflow:hidden;opacity:0;pointer-events:none;transition:opacity .6s ease;}
+.intro-overlay.show{opacity:1;pointer-events:auto;}
+.intro-overlay::before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(45deg,transparent 0 22px,rgba(34,197,94,.05) 22px 23px);mask-image:radial-gradient(circle,#000 30%,transparent 75%);}
+.intro-logo{width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,rgba(34,197,94,.35),transparent 70%);display:grid;place-items:center;margin-bottom:26px;box-shadow:0 0 60px rgba(34,197,94,.6),inset 0 0 40px rgba(34,197,94,.2);animation:introPulse 2.4s ease-in-out infinite;}
+.intro-logo .ic{width:70px;height:70px;color:var(--green-bright);filter:drop-shadow(0 0 18px var(--green));}
+@keyframes introPulse{50%{transform:scale(1.06);box-shadow:0 0 100px rgba(34,197,94,.8),inset 0 0 60px rgba(34,197,94,.3);}}
+.intro-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(38px,8vw,88px);font-weight:700;letter-spacing:-2px;line-height:1;background:linear-gradient(180deg,#e6ffec,#4ade80 55%,#22c55e);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 60px rgba(34,197,94,.35);animation:introSlide .8s cubic-bezier(.2,.9,.3,1.1) both;position:relative;}
+.intro-sub{margin-top:16px;color:var(--green-bright);letter-spacing:6px;font-size:13px;font-weight:600;text-transform:uppercase;animation:introSlide .8s .2s cubic-bezier(.2,.9,.3,1.1) both;position:relative;}
+@keyframes introSlide{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
+.intro-bar{margin-top:38px;width:min(320px,70vw);height:4px;border-radius:99px;background:rgba(34,197,94,.15);overflow:hidden;position:relative;}
+.intro-bar::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--green),var(--green-bright));animation:introBar 1.8s ease-in-out forwards;}
+@keyframes introBar{from{transform:translateX(-100%);}to{transform:translateX(0);}}
+
+/* ============ WARNING SCREEN ============ */
+.warn-overlay{position:fixed;inset:0;z-index:4900;background:radial-gradient(900px 500px at 50% 30%, rgba(34,197,94,.15), transparent 70%),linear-gradient(180deg,#040604,#080d09 50%,#040604);display:none;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;}
+.warn-overlay.show{display:flex;animation:overlayIn .4s;}
+.warn-card{max-width:760px;width:100%;background:linear-gradient(180deg,var(--card),#050805);border:1px solid var(--green);border-radius:22px;padding:36px;box-shadow:0 0 0 1px rgba(34,197,94,.25),0 30px 80px -20px rgba(0,0,0,.8),0 0 80px -30px var(--green-glow);text-align:center;}
+.warn-icon{width:78px;height:78px;border-radius:50%;margin:0 auto 18px;background:radial-gradient(circle,rgba(239,68,68,.25),transparent 70%);display:grid;place-items:center;color:#f87171;box-shadow:0 0 40px rgba(239,68,68,.35);}
+.warn-icon .ic{width:40px;height:40px;}
+.warn-card h1{font-family:'Space Grotesk',sans-serif;font-size:32px;background:linear-gradient(180deg,#e6ffec,#4ade80);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:14px;letter-spacing:-1px;}
+.warn-text{color:var(--text);font-size:16px;line-height:1.7;text-align:left;background:rgba(16,24,16,.6);border:1px solid var(--border);border-radius:14px;padding:20px;margin:16px 0 24px;}
+.warn-text strong{color:var(--green-bright);}
+.warn-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:22px;}
+.warn-actions button{width:auto;padding:14px 34px;font-size:14px;min-width:150px;}
+.warn-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;}
+@media(max-width:600px){.warn-info-grid{grid-template-columns:1fr;}}
+.warn-info-btn{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.35);color:var(--green-bright);padding:14px 16px;border-radius:14px;font-size:13px;font-weight:600;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;transition:all .2s;width:100%;}
+.warn-info-btn:hover{background:rgba(34,197,94,.18);border-color:var(--green);transform:translateY(-1px);}
+.warn-info-btn .ic{color:var(--green);width:20px;height:20px;flex-shrink:0;}
+.warn-info-panel{display:none;margin-top:14px;background:rgba(5,8,5,.7);border:1px solid var(--border-bright);border-radius:14px;padding:18px;text-align:left;color:var(--text-dim);font-size:14px;line-height:1.65;animation:fadeIn .3s;}
+.warn-info-panel.show{display:block;}
+.warn-info-panel h4{color:var(--green-bright);font-family:'Space Grotesk',sans-serif;margin-bottom:8px;font-size:15px;}
+
+/* ============ LOGIN GATE SCREEN ============ */
+.login-overlay{position:fixed;inset:0;z-index:4800;background:radial-gradient(1200px 600px at 50% 30%, rgba(34,197,94,.12), transparent 70%),#020402;display:none;align-items:center;justify-content:center;padding:20px;overflow-y:auto;}
+.login-overlay.show{display:flex;animation:overlayIn .4s;}
+.login-card{max-width:420px;width:100%;background:#0a0f0a;border:2px solid var(--green);border-radius:20px;padding:34px 30px;box-shadow:0 0 0 1px rgba(34,197,94,.25),0 0 60px -10px var(--green-glow),0 30px 80px -20px rgba(0,0,0,.85);text-align:center;position:relative;}
+.login-logo{width:82px;height:82px;border-radius:50%;margin:0 auto 14px;overflow:hidden;background:#0a0f0a;border:2px solid var(--green);display:grid;place-items:center;box-shadow:0 0 30px rgba(34,197,94,.5);}
+.login-logo img{width:100%;height:100%;object-fit:contain;display:block;}
+.login-card h1{font-family:'Space Grotesk',sans-serif;color:var(--green-bright);font-size:22px;letter-spacing:.5px;margin-bottom:6px;text-shadow:0 0 20px var(--green-glow);}
+.login-sub{color:var(--text-dim);font-size:13px;margin-bottom:20px;}
+.login-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:20px;}
+.login-tab{flex:1;background:transparent;border:none;color:var(--text-dim);padding:12px 8px;font-weight:700;font-size:13px;letter-spacing:1px;cursor:pointer;position:relative;text-transform:uppercase;transition:color .2s;width:auto;}
+.login-tab:hover{color:var(--green-bright);background:transparent;transform:none;filter:none;box-shadow:none;}
+.login-tab.active{color:var(--green-bright);}
+.login-tab.active::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--green);box-shadow:0 0 10px var(--green);}
+.login-form{display:none;text-align:left;}
+.login-form.active{display:block;animation:fadeIn .3s;}
+.login-form label{color:var(--green-bright);}
+.login-form button.primary{width:100%;padding:14px;margin-top:8px;font-size:14px;letter-spacing:1px;}
+.login-divider{display:flex;align-items:center;gap:10px;margin:18px 0 14px;color:var(--text-dim);font-size:11px;text-transform:uppercase;letter-spacing:1.2px;}
+.login-divider::before,.login-divider::after{content:"";flex:1;height:1px;background:var(--border);}
+.social-row{display:flex;gap:10px;justify-content:center;margin-bottom:14px;}
+.social-btn{width:44px;height:44px;border-radius:12px;border:1px solid var(--border);background:rgba(16,24,16,.7);display:grid;place-items:center;cursor:pointer;color:var(--text);transition:all .2s;padding:0;}
+.social-btn:hover{border-color:var(--green);background:rgba(34,197,94,.1);transform:translateY(-2px);box-shadow:0 0 20px rgba(34,197,94,.3);}
+.social-btn.google{color:#ea4335;}
+.social-btn.facebook{color:#1877f2;background:rgba(24,119,242,.12);border-color:rgba(24,119,242,.4);}
+.social-btn.x{color:#fff;}
+.social-btn.discord{color:#fff;background:rgba(88,101,242,.2);border-color:rgba(88,101,242,.5);}
+.social-btn svg{width:20px;height:20px;}
+.guest-link{display:block;color:var(--green-bright);font-size:13px;text-decoration:underline;cursor:pointer;margin-top:6px;background:none;border:none;width:100%;}
+.guest-link:hover{color:var(--green);background:none;box-shadow:none;transform:none;filter:none;}
+
+/* ============ USERS ADMIN TAB ============ */
+.user-row{display:flex;align-items:center;gap:14px;background:rgba(16,24,16,.6);border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:10px;flex-wrap:wrap;}
+.user-row.banned{border-color:rgba(239,68,68,.5);background:rgba(60,10,10,.35);}
+.user-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--green),#0f7a34);display:grid;place-items:center;color:#03170a;font-weight:700;font-family:'Space Grotesk',sans-serif;font-size:18px;flex-shrink:0;}
+.user-info{flex:1;min-width:200px;}
+.user-info h4{font-family:'Space Grotesk',sans-serif;font-size:15px;color:var(--text);margin-bottom:2px;}
+.user-info small{color:var(--text-dim);font-size:12px;display:block;}
+.user-badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;background:rgba(34,197,94,.15);color:var(--green-bright);border:1px solid rgba(34,197,94,.4);margin-left:6px;}
+.user-badge.banned{background:rgba(239,68,68,.15);color:#fca5a5;border-color:rgba(239,68,68,.5);}
+.user-actions{display:flex;gap:6px;flex-wrap:wrap;}
+.user-actions button{width:auto;padding:8px 12px;font-size:12px;}
 </style>
 </head>
 
 <body>
 
-<header>
-    <div class="logo">KAWE ROM HUB 👑</div>
+<!-- ============ INTRO 1: KAWE DESENVOLVEDOR ============ -->
+<div class="intro-overlay" id="intro1">
+    <div class="intro-logo">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/>
+        </svg>
+    </div>
+    <div class="intro-title">KAWE</div>
+    <div class="intro-sub">Desenvolvedor</div>
+    <div class="intro-bar"></div>
+</div>
 
-    <nav>
-        <a href="#" onclick="showPage('home')">Início</a>
-        <a href="#" onclick="showPage('catalogo')">Jogos</a>
-        <a href="#" onclick="showPage('upload')">Adicionar</a>
-        <a href="#" onclick="showPage('sobre')">Sobre</a>
+<!-- ============ INTRO 2: KAWE PIRATARIA OFICIAL ============ -->
+<div class="intro-overlay" id="intro2">
+    <div class="intro-logo">
+        <img src="/kawe-logo.png" alt="KAWE" style="width:100%;height:100%;object-fit:contain;border-radius:50%;">
+    </div>
+    <div class="intro-title">KAWE PIRATARIA</div>
+    <div class="intro-sub">Oficial</div>
+    <div class="intro-bar"></div>
+</div>
+
+<!-- ============ WARNING SCREEN ============ -->
+<div class="warn-overlay" id="warnScreen">
+    <div class="warn-card">
+        <div class="warn-icon">
+            <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/>
+            </svg>
+        </div>
+        <h1>⚠ AVISO IMPORTANTE ⚠</h1>
+        <div class="warn-text">
+            <p>Bem-vindo ao <strong>KAWE PIRATARIA OFICIAL</strong>. Antes de entrar, leia com atenção:</p>
+            <br>
+            <p>Este site é uma <strong>biblioteca de conteúdos</strong> voltada a estudos, preservação retrô e uso pessoal.
+            Todo o conteúdo aqui listado é apenas <strong>indexado</strong> — nenhum arquivo é hospedado em nossos servidores.
+            Você é <strong>totalmente responsável</strong> pelo uso que fizer dos links baixados.</p>
+            <br>
+            <p>Se você <strong>não concorda</strong> com esses termos ou não tem permissão legal para baixar/utilizar
+            os conteúdos, por favor <strong>saia agora</strong>. Ao clicar em <strong>ENTRAR</strong> você declara ter
+            lido e concordado com este aviso e assume total responsabilidade pelo uso do site.</p>
+        </div>
+        <div class="warn-actions">
+            <button onclick="acceptWarning()">
+                <svg class="ic"><use href="#i-check"/></svg> ENTRAR
+            </button>
+            <button class="btn-danger" onclick="rejectWarning()">
+                <svg class="ic"><use href="#i-x"/></svg> SAIR
+            </button>
+        </div>
+        <div class="warn-info-grid">
+            <button class="warn-info-btn" onclick="toggleInfo('infoVirus')">
+                <svg class="ic"><use href="#i-shield"/></svg>
+                <span>O site tem vírus?</span>
+            </button>
+            <button class="warn-info-btn" onclick="toggleInfo('infoLinks')">
+                <svg class="ic"><use href="#i-link"/></svg>
+                <span>De onde vêm os links?</span>
+            </button>
+        </div>
+        <div class="warn-info-panel" id="infoVirus">
+            <h4>🛡 Segurança & Vírus</h4>
+            <p>O site <strong>KAWE PIRATARIA OFICIAL</strong> em si <strong>não contém vírus</strong>.
+            Não executamos scripts maliciosos, mineradores ou pop-ups suspeitos.
+            Porém, como os arquivos são hospedados em serviços externos (Mediafire, Google Drive, Mega, etc.),
+            recomendamos <strong>sempre escanear</strong> o download com um antivírus (Windows Defender, Malwarebytes)
+            antes de abrir. Nunca desative sua proteção para instalar algo.</p>
+        </div>
+        <div class="warn-info-panel" id="infoLinks">
+            <h4>🔗 Origem dos Links</h4>
+            <p>Os links são <strong>coletados de fontes públicas</strong> da internet: fóruns retrô, comunidades de preservação
+            de jogos, canais do Telegram, grupos de fãs e o próprio envio dos usuários pela aba <strong>Upload</strong>.
+            Cada link é <strong>revisado manualmente</strong> pela administração antes de ser publicado.
+            Se você é autor de algum conteúdo e deseja que seja removido, entre em contato pela aba <strong>Créditos</strong>.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ============ LOGIN GATE SCREEN ============ -->
+<div class="login-overlay" id="loginGate">
+    <div class="login-card">
+        <div class="login-logo"><img src="/kawe-logo.png" alt="KAWE"></div>
+        <h1>BEM-VINDO AO KAWE</h1>
+        <div class="login-sub">Faça login ou cadastre-se para continuar</div>
+
+        <div class="login-tabs">
+            <button class="login-tab active" data-ltab="in" onclick="switchLoginTab('in')">ENTRAR</button>
+            <button class="login-tab" data-ltab="up" onclick="switchLoginTab('up')">CADASTRAR</button>
+        </div>
+
+        <form class="login-form active" id="lform-in" onsubmit="event.preventDefault();gateLogin();">
+            <label>USUÁRIO OU EMAIL</label>
+            <input type="text" id="gateLoginUser" placeholder="Seu usuário ou email" autocomplete="username">
+            <label>SENHA</label>
+            <input type="password" id="gateLoginPass" placeholder="Sua senha" autocomplete="current-password">
+            <button type="submit" class="primary">ENTRAR NA CONTA</button>
+        </form>
+
+        <form class="login-form" id="lform-up" onsubmit="event.preventDefault();gateRegister();">
+            <label>USUÁRIO</label>
+            <input type="text" id="gateRegUser" placeholder="Escolha um usuário">
+            <label>EMAIL</label>
+            <input type="text" id="gateRegEmail" placeholder="seu@email.com">
+            <label>SENHA</label>
+            <input type="password" id="gateRegPass" placeholder="Mínimo 6 caracteres">
+            <button type="submit" class="primary">CRIAR CONTA</button>
+        </form>
+
+        <div class="login-divider">Ou use suas redes sociais</div>
+        <div class="social-row">
+            <button class="social-btn google" onclick="socialLogin('Google')" title="Google">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.5 12.2c0-.7-.1-1.4-.2-2.1H12v4.1h5.9c-.3 1.4-1 2.5-2.2 3.3v2.8h3.6c2.1-1.9 3.2-4.8 3.2-8.1z"/><path d="M12 23c2.9 0 5.4-1 7.2-2.6l-3.6-2.8c-1 .7-2.3 1.1-3.6 1.1-2.8 0-5.1-1.9-6-4.4H2.3v2.8C4.1 20.7 7.8 23 12 23z" fill="#34a853"/><path d="M6 14.3c-.2-.7-.4-1.5-.4-2.3s.1-1.6.4-2.3V6.9H2.3C1.5 8.5 1 10.2 1 12s.5 3.5 1.3 5.1L6 14.3z" fill="#fbbc04"/><path d="M12 5.4c1.6 0 3 .5 4.1 1.6l3.1-3.1C17.4 2.1 14.9 1 12 1 7.8 1 4.1 3.3 2.3 6.9L6 9.7c.9-2.5 3.2-4.3 6-4.3z" fill="#ea4335"/></svg>
+            </button>
+            <button class="social-btn facebook" onclick="socialLogin('Facebook')" title="Facebook">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4H7v-3.5h3.1V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9v2.2h3.4l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>
+            </button>
+            <button class="social-btn x" onclick="socialLogin('X')" title="X (Twitter)">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23.4 22h-7l-5.5-7.1L4.6 22H1.5l8.1-9.3L1 2h7.1l5 6.6L18.9 2zm-1.2 18h1.9L7 4h-2l12.7 16z"/></svg>
+            </button>
+            <button class="social-btn discord" onclick="socialLogin('Discord')" title="Discord">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.3 4.4A19.8 19.8 0 0 0 15.4 3c-.2.4-.5.9-.7 1.3a18.3 18.3 0 0 0-5.5 0c-.2-.4-.5-.9-.7-1.3a19.8 19.8 0 0 0-4.9 1.4C.6 9.1-.3 13.6.1 18a19.9 19.9 0 0 0 6 3c.5-.7.9-1.4 1.3-2.2-.7-.3-1.4-.6-2-1l.5-.4a14.2 14.2 0 0 0 12.2 0l.5.4c-.6.4-1.3.7-2 1 .4.8.8 1.5 1.3 2.2a19.8 19.8 0 0 0 6-3c.5-5-.9-9.4-3.6-13.6zM8.5 15.3c-1.2 0-2.2-1.1-2.2-2.5s1-2.5 2.2-2.5c1.3 0 2.3 1.1 2.2 2.5 0 1.4-1 2.5-2.2 2.5zm7 0c-1.2 0-2.2-1.1-2.2-2.5s1-2.5 2.2-2.5c1.3 0 2.3 1.1 2.2 2.5 0 1.4-1 2.5-2.2 2.5z"/></svg>
+            </button>
+        </div>
+        <button class="guest-link" onclick="continueAsGuest()">Continuar sem conta (Modo Visitante)</button>
+    </div>
+</div>
+
+
+<!-- ============ SVG ICON SPRITE ============ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-crown" viewBox="0 0 24 24"><path d="M2 7l4 4 4-7 4 7 4-4 2 12H4z"/><path d="M4 21h16"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5z"/><path d="M9 12l2 2 4-4"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></symbol>
+    <symbol id="i-gamepad" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="12" rx="4"/><path d="M7 12h4M9 10v4M15 12h.01M18 14h.01"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 2s5 4 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4-1 3 1 4 2 4 0-3-1-4 1-10z"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h6a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4z"/><path d="M20 4h-6a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h7z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+    <symbol id="i-save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5M12 3v12"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></symbol>
+    <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></symbol>
+    <symbol id="i-x-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5M3 21v-5h5"/></symbol>
+    <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 1 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+    <symbol id="i-tag" viewBox="0 0 24 24"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></symbol>
+    <symbol id="i-film" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 3v18M17 3v18M3 8h4M3 16h4M17 8h4M17 16h4"/></symbol>
+    <symbol id="i-tv" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M8 3l4 4 4-4"/></symbol>
+    <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="6" width="14" height="12" rx="2"/><path d="M17 10l4-2v8l-4-2z"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 10c0-1.5 1.3-2.5 3-2.5s3 1 3 2.5-3 1.5-3 3 1.3 2.5 3 2.5-3 1-3-.5"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M17.9 17.9A10 10 0 0 1 12 20c-7 0-10-8-10-8a17 17 0 0 1 4-5.3M9.9 4.2A10 10 0 0 1 12 4c7 0 10 8 10 8a17 17 0 0 1-2.1 3.2M1 1l22 22"/><path d="M9.9 9.9a3 3 0 1 0 4.2 4.2"/></symbol>
+    <symbol id="i-server" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 8h.01M7 17h.01"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7L12 19"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></symbol>
+  </defs>
+</svg>
+
+<header>
+    <div class="logo-wrap">
+        <button class="hamburger" onclick="openDrawer()" aria-label="Menu">
+            <svg class="ic"><use href="#i-menu"/></svg>
+        </button>
+        <div class="logo"><svg class="ic"><use href="#i-crown"/></svg> KAWE PIRATARIA OFICIAL</div>
+        <button class="admin-btn" id="adminToggleBtn" onclick="openAdminGate()">
+            <svg class="ic"><use href="#i-lock"/></svg> <span id="adminBtnLabel">ADMIN</span>
+        </button>
+    </div>
+
+    <nav id="mainNav">
+        <a onclick="showPage('home')"><svg class="ic" style="width:14px;height:14px;vertical-align:-2px;"><use href="#i-home"/></svg> Início</a>
+        <a onclick="showPage('sobre')">Sobre</a>
+        <a onclick="showPage('creditos')">Créditos</a>
+        <a onclick="showPage('upload')">Upload</a>
+        <a onclick="showPage('cadastro')">Cadastro & Login</a>
+        <a onclick="filterCategory('jogos')">Jogos</a>
+        <a onclick="filterCategory('series')">Séries</a>
+        <a onclick="filterCategory('filmes')">Filmes</a>
+        <a onclick="filterCategory('curtas')">Curtas</a>
+        <a onclick="filterCategory('adulto')">Adulto +18</a>
+        <a onclick="filterCategory('fotos')">Fotos</a>
+        <a onclick="filterCategory('videos')">Vídeos</a>
+        <a onclick="filterCategory('gifs')">Gifs</a>
+        <a onclick="filterCategory('documentos')">Documentos</a>
     </nav>
 </header>
+
+<!-- Drawer menu -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer">
+    <div class="drawer-head">
+        <h3>Menu</h3>
+        <button class="close-x" onclick="closeDrawer()" aria-label="Fechar"><svg class="ic"><use href="#i-x"/></svg></button>
+    </div>
+    <a onclick="showPage('home');closeDrawer()"><svg class="ic"><use href="#i-home"/></svg> Início</a>
+    <a onclick="showPage('sobre');closeDrawer()"><svg class="ic"><use href="#i-info"/></svg> Sobre</a>
+    <a onclick="showPage('creditos');closeDrawer()"><svg class="ic"><use href="#i-coin"/></svg> Créditos</a>
+    <a onclick="showPage('upload');closeDrawer()"><svg class="ic"><use href="#i-upload"/></svg> Upload</a>
+    <a onclick="showPage('cadastro');closeDrawer()"><svg class="ic"><use href="#i-user"/></svg> Cadastro & Login</a>
+    <a onclick="filterCategory('jogos');closeDrawer()"><svg class="ic"><use href="#i-gamepad"/></svg> Jogos</a>
+    <a onclick="filterCategory('series');closeDrawer()"><svg class="ic"><use href="#i-tv"/></svg> Séries</a>
+    <a onclick="filterCategory('filmes');closeDrawer()"><svg class="ic"><use href="#i-film"/></svg> Filmes</a>
+    <a onclick="filterCategory('curtas');closeDrawer()"><svg class="ic"><use href="#i-play"/></svg> Curtas</a>
+    <a onclick="filterCategory('adulto');closeDrawer()"><svg class="ic"><use href="#i-eye-off"/></svg> Conteúdo Adulto +18</a>
+    <a onclick="filterCategory('fotos');closeDrawer()"><svg class="ic"><use href="#i-image"/></svg> Fotos</a>
+    <a onclick="filterCategory('videos');closeDrawer()"><svg class="ic"><use href="#i-video"/></svg> Vídeos</a>
+    <a onclick="filterCategory('gifs');closeDrawer()"><svg class="ic"><use href="#i-image"/></svg> Gifs</a>
+    <a onclick="filterCategory('documentos');closeDrawer()"><svg class="ic"><use href="#i-file"/></svg> Documentos</a>
+    <a onclick="requireAdminPin();closeDrawer()"><svg class="ic"><use href="#i-shield"/></svg> Painel Admin</a>
+</aside>
+
 
 <div id="home" class="page active">
 
 <section class="hero">
-    <h1>KAWE PIRATARIA</h1>
-
-    <p>
-        Biblioteca gamer premium com visual verde e preto.
-        Organize seus jogos favoritos de GBA em um catálogo moderno,
-        rápido e otimizado para celular e PC.
-    </p>
-
-    <button onclick="showPage('catalogo')">
-        VER CATÁLOGO
-    </button>
+    <span class="hero-badge"><span class="dot"></span> ROM HUB PREMIUM · 2026</span>
+    <h1>KAWE PIRATARIA OFICIAL</h1>
+    <p>Biblioteca gamer premium com visual verde neon. Organize seus jogos favoritos de GBA em um catálogo moderno, rápido e otimizado para celular e PC.</p>
+    <button onclick="showPage('catalogo')">VER CATÁLOGO <svg class="ic"><use href="#i-arrow-right"/></svg></button>
 </section>
 
 <div class="search-box">
-    <input type="text" id="search" placeholder="Buscar jogos..." onkeyup="buscar()">
+    <div class="search-wrap">
+        <svg class="ic"><use href="#i-search"/></svg>
+        <input type="text" id="search" placeholder="Buscar jogos, ROMs, categorias..." onkeyup="buscar()">
+    </div>
 </div>
 
-<h2 class="section-title">🔥 Jogos Adicionados</h2>
-
-<div class="grid" id="lista">
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1200&auto=format&fit=crop">
-
-<div class="card-content">
-<h3>Pokemon Unbound</h3>
-
-<p>
-Hack ROM completa com novos sistemas, mapa expandido e dificuldade avançada.
-</p>
-
-<span class="tag">GBA</span>
-<span class="tag">PT-BR</span>
-<span class="tag">RPG</span>
-
-<br><br>
-
-<button onclick="detalhes(
-'Pokemon Unbound',
-'Hack ROM avançada com história completa, novos eventos e grande exploração.',
-'https://www.mediafire.com/file/ipj30houhnd86i3/PK_FR_%252528PT-BR%252529.zip/file',
-'4 MB',
-'RPG',
-'Offline'
-)">
-Download
-</button>
-</div>
-</div>
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1542751110-97427bbecf20?q=80&w=1200&auto=format&fit=crop">
-
-<div class="card-content">
-<h3>Pokémon Emerald PT-BR</h3>
-
-<p>
-Versão traduzida em português baseada no clássico Pokémon Emerald.
-</p>
-
-<span class="tag">GBA</span>
-<span class="tag">Português</span>
-<span class="tag">Aventura</span>
-
-<br><br>
-
-<button onclick="detalhes(
-'Pokémon Emerald PT-BR',
-'Versão traduzida com gameplay clássica e região Hoenn completa.',
-'https://www.mediafire.com/file/yu8hepmdc12xgmv/PK+EMR+(PT-BR).zip/file',
-'16 MB',
-'RPG',
-'Offline'
-)">
-Download
-</button>
-</div>
-</div>
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1511882150382-421056c89033?q=80&w=1200&auto=format&fit=crop">
-
-<div class="card-content">
-<h3>Pokémon Sapphire PT-BR</h3>
-
-<p>
-Clássico Pokémon Sapphire em português com suporte para emuladores.
-</p>
-
-<span class="tag">GBA</span>
-<span class="tag">PT-BR</span>
-<span class="tag">Retro</span>
-
-<br><br>
-
-<button onclick="detalhes(
-'Pokémon Sapphire PT-BR',
-'Versão clássica portátil com região Hoenn e batalhas lendárias.',
-'https://www.mediafire.com/file/032wa4o5u5rczcq/Pokemon_Sapphire_PT-BR%25255BLukaBat%25255D.zip/file',
-'16 MB',
-'RPG',
-'Offline'
-)">
-Download
-</button>
-</div>
-</div>
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?q=80&w=1200&auto=format&fit=crop">
-
-<div class="card-content">
-<h3>Ru3y Português</h3>
-
-<p>
-ROM personalizada em português com experiência retro para GBA.
-</p>
-
-<span class="tag">GBA</span>
-<span class="tag">Custom</span>
-<span class="tag">Offline</span>
-
-<br><br>
-
-<button onclick="detalhes(
-'Ru3y Português',
-'ROM personalizada traduzida com experiência portátil clássica.',
-'https://www.mediafire.com/file/omec55dogogzo9m/Ru3y_Portugues%5Bheypikachu.com%5D.HEYPIKACHU/file',
-'8 MB',
-'Retro',
-'Offline'
-)">
-Download
-</button>
-</div>
-</div>
-
-</div>
+<h2 class="section-title"><svg class="ic"><use href="#i-flame"/></svg> Jogos Adicionados</h2>
+<div class="grid" id="lista"></div>
 </div>
 
 <div id="catalogo" class="page">
-<h2 class="section-title">🎮 Biblioteca Gamer</h2>
-
+<h2 class="section-title"><svg class="ic"><use href="#i-gamepad"/></svg> Biblioteca Gamer</h2>
 <div class="grid" id="catalogGrid"></div>
 </div>
 
 <div id="detalhes" class="page">
-
 <div class="detail-box">
-<img id="detailImg" src="https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1200&auto=format&fit=crop">
-
+<img id="detailImg" src="">
 <h1 id="titulo"></h1>
-
 <p id="desc"></p>
-
 <div class="info-list">
-<div class="info-item">
-<h3>Tamanho</h3>
-<p id="size"></p>
+<div class="info-item"><h3>Tamanho</h3><p id="size"></p></div>
+<div class="info-item"><h3>Categoria</h3><p id="genre"></p></div>
+<div class="info-item"><h3>Modo</h3><p id="mode"></p></div>
 </div>
-
-<div class="info-item">
-<h3>Categoria</h3>
-<p id="genre"></p>
-</div>
-
-<div class="info-item">
-<h3>Modo</h3>
-<p id="mode"></p>
-</div>
-</div>
-
-<button id="downloadBtn">
-Baixar Arquivo
-</button>
-
+<button id="downloadBtn"><svg class="ic"><use href="#i-download"/></svg> Baixar Arquivo</button>
+<div id="detailExtras"></div>
 <br><br>
-
-<button onclick="showPage('home')">
-Voltar
-</button>
-
-</div>
-</div>
-
-<div id="upload" class="page">
-
-<div class="upload-area">
-<h2>➕ Adicionar Novo Jogo</h2>
-
-<input type="text" id="nome" placeholder="Nome do jogo">
-
-<textarea id="descricao" placeholder="Descrição"></textarea>
-
-<input type="text" id="link" placeholder="Nome do arquivo ou link">
-
-<button onclick="addItem()">
-Adicionar ao Catálogo
-</button>
+<button class="btn-secondary" onclick="showPage('home')"><svg class="ic"><use href="#i-arrow-left"/></svg> Voltar</button>
 </div>
 </div>
 
 <div id="sobre" class="page">
-<h2 class="section-title">📖 Sobre</h2>
-
+<h2 class="section-title"><svg class="ic"><use href="#i-book"/></svg> Sobre</h2>
 <div class="detail-box">
-<p>
-O KAWE ROM HUB PREMIUM foi criado para organizar bibliotecas gamer retrô com visual moderno.
-</p>
-
-<br>
-
-<p>
-O site possui:
-</p>
-
-<br>
-
+<p>O <strong style="color:var(--green-bright);">KAWE PIRATARIA OFICIAL</strong> foi criado para organizar bibliotecas gamer retrô com visual moderno.</p>
+<br><p>O site possui:</p><br>
 <ul>
-<li>✔ Tema verde e preto premium</li>
-<li>✔ Sistema de busca</li>
-<li>✔ Biblioteca de jogos</li>
-<li>✔ Sistema de detalhes</li>
-<li>✔ Compatível com celular</li>
-<li>✔ Visual gamer moderno</li>
-<li>✔ Sistema para adicionar novos jogos</li>
+<li><svg class="ic"><use href="#i-check"/></svg> Tema verde e preto premium</li>
+<li><svg class="ic"><use href="#i-check"/></svg> Sistema de busca</li>
+<li><svg class="ic"><use href="#i-check"/></svg> Biblioteca de jogos</li>
+<li><svg class="ic"><use href="#i-check"/></svg> Sistema de detalhes</li>
+<li><svg class="ic"><use href="#i-check"/></svg> Compatível com celular</li>
+<li><svg class="ic"><use href="#i-check"/></svg> Painel Admin protegido por senha</li>
+<li><svg class="ic"><use href="#i-check"/></svg> Backup e restauração de dados</li>
 </ul>
+<br><p style="color:var(--text-dim);display:flex;align-items:center;gap:8px;"><svg class="ic" style="color:#f59e0b;"><use href="#i-alert"/></svg> Utilize apenas jogos e ROMs que você tenha permissão legal para usar.</p>
+</div>
+</div>
 
-<br>
+<div id="creditos" class="page">
+<h2 class="section-title"><svg class="ic"><use href="#i-coin"/></svg> Créditos</h2>
+<div class="detail-box">
+<p>Desenvolvido por <strong style="color:var(--green-bright);">KAWE</strong>. Design verde neon, arquitetura de catálogo modular e painel admin com PIN.</p>
+<br><p style="color:var(--text-dim);">Ícones: sprite SVG interno. Fontes: Space Grotesk + Inter (Google Fonts).</p>
+</div>
+</div>
 
-<p>
-⚠ Utilize apenas jogos e ROMs que você tenha permissão legal para usar.
-</p>
+<div id="upload" class="page">
+<h2 class="section-title"><svg class="ic"><use href="#i-upload"/></svg> Enviar Conteúdo</h2>
+
+<div id="uploadGate" class="up-gate" onclick="document.getElementById('upFileInput').click()"
+     ondragover="event.preventDefault();this.classList.add('drag')"
+     ondragleave="this.classList.remove('drag')"
+     ondrop="handleUploadDrop(event)">
+    <div class="up-gate-inner">
+        <div class="up-gate-icon"><svg class="ic"><use href="#i-upload"/></svg></div>
+        <h3>Clique aqui ou arraste seus arquivos</h3>
+        <p>Solte imagens, vídeos, ROMs, documentos ou qualquer arquivo — abrimos o formulário automaticamente.</p>
+        <span class="up-gate-hint">▲ TEMA VERDE NEON · KAWE PIRATARIA OFICIAL ▲</span>
+    </div>
+    <input type="file" id="upFileInput" multiple hidden onchange="handleUploadFiles(this.files)">
+</div>
+
+<div id="upFormWrap" class="upload-area" style="display:none;">
+    <h2>Sugerir conteúdo</h2>
+    <p style="color:var(--text-dim);font-size:13px;margin-bottom:10px;">Envie um link para revisão. Apenas admins publicam no catálogo.</p>
+    <div id="upFilesList" style="margin-bottom:12px;"></div>
+    <label>Título</label>
+    <input type="text" id="upTitulo" placeholder="Nome do conteúdo">
+    <label>Categoria</label>
+    <input type="text" id="upCat" placeholder="Jogos, Filmes, Fotos...">
+    <label>Link</label>
+    <input type="url" id="upLink" placeholder="https://...">
+    <label>Observação</label>
+    <textarea id="upObs" placeholder="Descreva brevemente..."></textarea>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button onclick="submitUpload()"><svg class="ic"><use href="#i-upload"/></svg> Enviar sugestão</button>
+        <button class="btn-secondary" onclick="resetUploadGate()"><svg class="ic"><use href="#i-x"/></svg> Cancelar</button>
+    </div>
+</div>
+</div>
+
+<div id="cadastro" class="page">
+<h2 class="section-title"><svg class="ic"><use href="#i-user"/></svg> Cadastro & Login</h2>
+<div class="upload-area">
+    <h2>Entrar</h2>
+    <label>Usuário ou e-mail</label>
+    <input type="text" id="loginUser" placeholder="seu@email.com">
+    <label>Senha</label>
+    <input type="password" id="loginPass" placeholder="••••••••">
+    <button onclick="doLogin()"><svg class="ic"><use href="#i-lock"/></svg> Entrar</button>
+</div>
+<div class="upload-area">
+    <h2>Criar conta</h2>
+    <label>Usuário</label>
+    <input type="text" id="regUser" placeholder="seu_usuario">
+    <label>E-mail</label>
+    <input type="text" id="regEmail" placeholder="seu@email.com">
+    <label>Senha</label>
+    <input type="password" id="regPass" placeholder="mínimo 6 caracteres">
+    <button onclick="doRegister()"><svg class="ic"><use href="#i-user"/></svg> Cadastrar</button>
+</div>
+</div>
+
+
+
+<!-- ADMIN PAGE -->
+<div id="admin" class="page">
+<div class="admin-shell show">
+    <div class="admin-header">
+        <div class="admin-title"><span class="crown"><svg class="ic"><use href="#i-crown"/></svg></span> Painel Admin — KAWE PIRATARIA OFICIAL</div>
+        <div class="admin-header-actions">
+            <button class="btn-secondary" onclick="showPage('home')"><svg class="ic"><use href="#i-arrow-left"/></svg> Voltar ao site</button>
+            <button class="btn-danger" onclick="adminLogout()"><svg class="ic"><use href="#i-logout"/></svg> Sair</button>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat"><div class="num" id="statTotal">0</div><div class="lbl">Jogos</div></div>
+        <div class="stat"><div class="num" id="statCats">0</div><div class="lbl">Categorias</div></div>
+        <div class="stat"><div class="num" id="statSize">0kb</div><div class="lbl">Storage</div></div>
+    </div>
+
+    <div class="admin-tabs">
+        <button class="admin-tab active" data-tab="add" onclick="switchTab('add')"><svg class="ic"><use href="#i-plus"/></svg> Adicionar</button>
+        <button class="admin-tab" data-tab="manage" onclick="switchTab('manage')"><svg class="ic"><use href="#i-list"/></svg> Gerenciar</button>
+        <button class="admin-tab" data-tab="users" onclick="switchTab('users')"><svg class="ic"><use href="#i-user"/></svg> Usuários</button>
+        <button class="admin-tab" data-tab="backup" onclick="switchTab('backup')"><svg class="ic"><use href="#i-save"/></svg> Backup</button>
+    </div>
+
+    <div class="admin-panel active" id="tab-add">
+        <h3 id="formTitle"><svg class="ic"><use href="#i-plus"/></svg> <span id="formTitleText">Adicionar Novo Jogo</span></h3>
+        <input type="hidden" id="editId">
+        <label>Título</label>
+        <input type="text" id="fTitulo" placeholder="Ex: Pokémon Emerald PT-BR">
+        <label>Thumbnail (URL da imagem)</label>
+        <input type="url" id="fThumb" placeholder="https://...">
+        <label>Descrição</label>
+        <textarea id="fDesc" placeholder="Descrição do jogo..."></textarea>
+        <label>Link de Download</label>
+        <input type="url" id="fLink" placeholder="https://mediafire.com/...">
+        <div class="admin-grid" style="gap:14px;">
+            <div><label>Tamanho</label><input type="text" id="fSize" placeholder="16 MB"></div>
+            <div><label>Categoria</label>
+                <select id="fGenre" onchange="updateSubcats()" style="width:100%;margin-top:6px;margin-bottom:16px;padding:14px 16px;border:1px solid var(--border);border-radius:12px;background:rgba(16,24,16,.6);color:var(--text);font-family:inherit;font-size:14px;outline:none;">
+                    <option value="jogos">Jogos</option>
+                    <option value="series">Séries</option>
+                    <option value="filmes">Filmes</option>
+                    <option value="curtas">Curtas</option>
+                    <option value="adulto">Conteúdo Adulto +18</option>
+                    <option value="fotos">Fotos</option>
+                    <option value="videos">Vídeos</option>
+                    <option value="gifs">Gifs</option>
+                    <option value="documentos">Documentos</option>
+                    <option value="outro">Outro</option>
+                </select>
+            </div>
+        </div>
+        <label>Subcategoria <span style="color:var(--text-dim);font-weight:400;font-size:12px;">(muda conforme a categoria)</span></label>
+        <select id="fSubcat" style="width:100%;margin-top:6px;margin-bottom:16px;padding:14px 16px;border:1px solid var(--border);border-radius:12px;background:rgba(16,24,16,.6);color:var(--text);font-family:inherit;font-size:14px;outline:none;"></select>
+        <label>Modo</label>
+        <input type="text" id="fMode" placeholder="Offline / Online">
+        <label>Tags (separadas por vírgula)</label>
+        <input type="text" id="fTags" placeholder="GBA, PT-BR, RPG">
+
+        <!-- DYNAMIC: extra links -->
+        <div class="dyn-section">
+            <div class="dyn-head">
+                <h4><svg class="ic"><use href="#i-link"/></svg> Links adicionais</h4>
+                <button type="button" class="mini-btn" onclick="addLink()"><svg class="ic"><use href="#i-plus"/></svg> Adicionar link</button>
+            </div>
+            <div id="linksList"></div>
+            <p style="font-size:12px;color:var(--text-dim);margin-top:4px;">Adicione quantos links quiser (Mediafire, Google Drive, Mega, torrent, etc).</p>
+        </div>
+
+        <!-- DYNAMIC: servers (grupos de links) -->
+        <div class="dyn-section">
+            <div class="dyn-head">
+                <h4><svg class="ic"><use href="#i-server"/></svg> Servidores (grupos de links / funções)</h4>
+                <button type="button" class="mini-btn" onclick="addServer()"><svg class="ic"><use href="#i-plus"/></svg> Adicionar servidor</button>
+            </div>
+            <div id="serversList"></div>
+            <p style="font-size:12px;color:var(--text-dim);margin-top:4px;">Cada servidor é um conjunto de links (ex: "Servidor 1", "Servidor Backup") com vários espelhos.</p>
+        </div>
+
+        <!-- DYNAMIC: iframes / embeds -->
+        <div class="dyn-section">
+            <div class="dyn-head">
+                <h4><svg class="ic"><use href="#i-code"/></svg> Iframes / URLs incorporadas</h4>
+                <button type="button" class="mini-btn" onclick="addIframe()"><svg class="ic"><use href="#i-plus"/></svg> Adicionar iframe</button>
+            </div>
+            <div id="iframesList"></div>
+            <p style="font-size:12px;color:var(--text-dim);margin-top:4px;">Cole URL de player, YouTube, Vimeo, Drive preview, etc. Aparecerá incorporado na página de detalhes.</p>
+        </div>
+
+        <!-- DYNAMIC: compartilhamento -->
+        <div class="dyn-section">
+            <div class="dyn-head">
+                <h4><svg class="ic"><use href="#i-share"/></svg> Links de compartilhamento</h4>
+                <button type="button" class="mini-btn" onclick="addShare()"><svg class="ic"><use href="#i-plus"/></svg> Adicionar</button>
+            </div>
+            <div id="sharesList"></div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;">
+            <button onclick="saveItem()"><svg class="ic"><use href="#i-save"/></svg> Salvar</button>
+            <button class="btn-secondary" onclick="resetForm()"><svg class="ic"><use href="#i-x"/></svg> Limpar</button>
+        </div>
+    </div>
+
+
+    <div class="admin-panel" id="tab-manage">
+        <h3><svg class="ic"><use href="#i-list"/></svg> Gerenciar Catálogo</h3>
+        <div id="itemList"></div>
+    </div>
+
+    <div class="admin-panel" id="tab-users">
+        <h3><svg class="ic"><use href="#i-user"/></svg> Gerenciar Usuários</h3>
+        <p style="color:var(--text-dim);font-size:13px;margin-bottom:16px;">Banco de dados dos usuários cadastrados. Toda vez que alguém se cadastra, a conta aparece aqui — você pode <strong style="color:var(--green-bright);">banir</strong> ou <strong style="color:#f87171;">excluir</strong>.</p>
+        <div class="stats-grid">
+            <div class="stat"><div class="num" id="statUsers">0</div><div class="lbl">Cadastrados</div></div>
+            <div class="stat"><div class="num" id="statBanned">0</div><div class="lbl">Banidos</div></div>
+            <div class="stat"><div class="num" id="statActive">0</div><div class="lbl">Ativos</div></div>
+        </div>
+        <div id="usersList"></div>
+    </div>
+
+    <div class="admin-panel" id="tab-backup">
+        <h3><svg class="ic"><use href="#i-save"/></svg> Backup & Restauração</h3>
+        <div class="backup-box">
+            <h4><svg class="ic"><use href="#i-download"/></svg> Exportar Backup</h4>
+            <p>Baixe um arquivo JSON com todos os jogos do catálogo. Guarde em local seguro.</p>
+            <button onclick="exportBackup()"><svg class="ic"><use href="#i-download"/></svg> Baixar Backup (.json)</button>
+        </div>
+        <div class="backup-box">
+            <h4><svg class="ic"><use href="#i-upload"/></svg> Restaurar Backup</h4>
+            <p>Selecione um arquivo .json exportado anteriormente para restaurar o catálogo.</p>
+            <input type="file" id="importFile" accept=".json" style="padding:10px;">
+            <button onclick="importBackup()" style="margin-top:8px;"><svg class="ic"><use href="#i-upload"/></svg> Restaurar</button>
+        </div>
+        <div class="backup-box danger">
+            <h4><svg class="ic"><use href="#i-alert"/></svg> Zona de Perigo</h4>
+            <p>Apaga TODOS os jogos do catálogo. Esta ação não pode ser desfeita.</p>
+            <button class="btn-danger" onclick="wipeAll()"><svg class="ic"><use href="#i-trash"/></svg> Apagar Tudo</button>
+        </div>
+        <div class="backup-box">
+            <h4><svg class="ic"><use href="#i-refresh"/></svg> Restaurar Padrão</h4>
+            <p>Restaura o catálogo aos 4 jogos originais do site.</p>
+            <button class="btn-secondary" onclick="resetDefaults()"><svg class="ic"><use href="#i-refresh"/></svg> Restaurar Padrão</button>
+        </div>
+    </div>
 </div>
 </div>
 
 <footer>
-KAWE ROM HUB PREMIUM © 2026 👑
+    KAWE PIRATARIA OFICIAL © 2026 · Feito com <svg class="ic"><use href="#i-heart"/></svg> para gamers retrô
 </footer>
 
-<script>
-function showPage(page){
-    document.querySelectorAll('.page').forEach(p=>{
-        p.classList.remove('active');
-    });
+<!-- ADMIN GATE MODAL -->
+<div class="modal-overlay" id="adminModal">
+    <div class="modal">
+        <div class="modal-icon"><svg class="ic"><use href="#i-shield"/></svg></div>
+        <h2>Acesso Admin</h2>
+        <p class="hint">Digite o PIN de 4 dígitos para continuar</p>
+        <div class="pin-inputs" id="pinInputs">
+            <input type="password" inputmode="numeric" maxlength="1" data-i="0">
+            <input type="password" inputmode="numeric" maxlength="1" data-i="1">
+            <input type="password" inputmode="numeric" maxlength="1" data-i="2">
+            <input type="password" inputmode="numeric" maxlength="1" data-i="3">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeAdminGate()">Cancelar</button>
+            <button onclick="verifyPin()">Entrar</button>
+        </div>
+    </div>
+</div>
 
+<div class="toast" id="toast"></div>
+
+<script>
+const ADMIN_PIN = "2011";
+const STORAGE_KEY = "kawe_catalog_v1";
+const AUTH_KEY = "kawe_admin_auth";
+
+const DEFAULT_ITEMS = [
+    {id:1, titulo:"Pokemon Unbound", thumb:"https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1200&auto=format&fit=crop",
+     desc:"Hack ROM avançada com história completa, novos eventos e grande exploração.",
+     link:"https://www.mediafire.com/file/ipj30houhnd86i3/PK_FR_%252528PT-BR%252529.zip/file",
+     size:"4 MB", genre:"RPG", mode:"Offline", tags:["GBA","PT-BR","RPG"]},
+    {id:2, titulo:"Pokémon Emerald PT-BR", thumb:"https://images.unsplash.com/photo-1542751110-97427bbecf20?q=80&w=1200&auto=format&fit=crop",
+     desc:"Versão traduzida com gameplay clássica e região Hoenn completa.",
+     link:"https://www.mediafire.com/file/yu8hepmdc12xgmv/PK+EMR+(PT-BR).zip/file",
+     size:"16 MB", genre:"RPG", mode:"Offline", tags:["GBA","Português","Aventura"]},
+    {id:3, titulo:"Pokémon Sapphire PT-BR", thumb:"https://images.unsplash.com/photo-1511882150382-421056c89033?q=80&w=1200&auto=format&fit=crop",
+     desc:"Versão clássica portátil com região Hoenn e batalhas lendárias.",
+     link:"https://www.mediafire.com/file/032wa4o5u5rczcq/Pokemon_Sapphire_PT-BR%25255BLukaBat%25255D.zip/file",
+     size:"16 MB", genre:"RPG", mode:"Offline", tags:["GBA","PT-BR","Retro"]},
+    {id:4, titulo:"Ru3y Português", thumb:"https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?q=80&w=1200&auto=format&fit=crop",
+     desc:"ROM personalizada traduzida com experiência portátil clássica.",
+     link:"https://www.mediafire.com/file/omec55dogogzo9m/Ru3y_Portugues%5Bheypikachu.com%5D.HEYPIKACHU/file",
+     size:"8 MB", genre:"Retro", mode:"Offline", tags:["GBA","Custom","Offline"]}
+];
+
+let items = [];
+
+function loadItems(){
+    try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        items = raw ? JSON.parse(raw) : [...DEFAULT_ITEMS];
+    }catch(e){ items = [...DEFAULT_ITEMS]; }
+}
+function saveItems(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); }
+function nextId(){ return (items.reduce((m,i)=>Math.max(m,i.id||0),0) || 0) + 1; }
+
+function renderCatalog(){
+    const listaEl = document.getElementById('lista');
+    const catEl = document.getElementById('catalogGrid');
+    const html = items.map(cardHTML).join('') || `<div class="empty-state" style="grid-column:1/-1;">Nenhum jogo no catálogo. Entre no Admin para adicionar.</div>`;
+    listaEl.innerHTML = html;
+    catEl.innerHTML = html;
+    updateStats();
+}
+function cardHTML(it){
+    const tags = (it.tags||[]).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('');
+    return `
+    <div class="card">
+      <div class="card-media"><img src="${escapeAttr(it.thumb)}" alt=""></div>
+      <div class="card-content">
+        <h3>${escapeHtml(it.titulo)}</h3>
+        <p>${escapeHtml(it.desc||'')}</p>
+        <div>${tags}</div>
+        <button onclick="detalhes(${it.id})"><svg class="ic"><use href="#i-download"/></svg> Download</button>
+      </div>
+    </div>`;
+}
+function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function escapeAttr(s){return escapeHtml(s);}
+
+function showPage(page){
+    if(page==='admin' && !isAuthed()){ openAdminGate(); return; }
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
     document.getElementById(page).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+    if(page==='admin'){ renderItemList(); updateStats(); }
+    if(page==='upload'){ resetUploadGate(); }
 }
 
-function detalhes(nome,desc,arquivo,size,genre,mode){
+/* ==== Subcategorias por categoria (admin form) ==== */
+const SUBCATS = {
+    jogos: ["Ação","Aventura","RPG","Estratégia","Esporte","Corrida","Luta","Puzzle","Retrô","Indie","Mundo Aberto"],
+    series: ["Anime","Drama","Comédia","Ação","Sci-Fi","Documentário","Reality"],
+    filmes: ["Ação","Comédia","Terror","Romance","Ficção Científica","Animação","Suspense","Documentário"],
+    curtas: ["Animação","Documental","Ficção","Experimental","Musical"],
+    adulto: ["Fotos","Vídeos","HQ / Doujin","Cosplay","Live Action","Anime +18"],
+    fotos: ["Wallpaper","Arte Digital","Fotografia","Cosplay","Pack","Screenshots"],
+    videos: ["Clipe","Tutorial","Gameplay","AMV","Trailer","Documentário"],
+    gifs: ["Meme","Anime","Reação","Games","Loop"],
+    documentos: ["PDF","EPUB","Mangá","HQ","E-book","Tutorial","Guia"],
+    outro: ["Diversos","Software","Ferramentas","Mods"]
+};
+function updateSubcats(preserve){
+    const gEl = document.getElementById('fGenre');
+    const sEl = document.getElementById('fSubcat');
+    if(!gEl || !sEl) return;
+    const list = SUBCATS[gEl.value] || ["Diversos"];
+    const current = preserve || sEl.value;
+    sEl.innerHTML = '<option value="">— selecione —</option>' + list.map(x=>`<option value="${escapeAttr(x)}">${escapeHtml(x)}</option>`).join('');
+    if(current && list.includes(current)) sEl.value = current;
+}
 
-    document.getElementById('titulo').innerText = nome;
-    document.getElementById('desc').innerText = desc;
-    document.getElementById('size').innerText = size;
-    document.getElementById('genre').innerText = genre;
-    document.getElementById('mode').innerText = mode;
+/* ==== Upload gate (dropzone) ==== */
+function resetUploadGate(){
+    const g = document.getElementById('uploadGate');
+    const f = document.getElementById('upFormWrap');
+    const list = document.getElementById('upFilesList');
+    const input = document.getElementById('upFileInput');
+    if(g){ g.style.display=''; g.classList.remove('drag'); }
+    if(f){ f.style.display='none'; }
+    if(list){ list.innerHTML=''; }
+    if(input){ input.value=''; }
+}
+function openUploadForm(){
+    document.getElementById('uploadGate').style.display='none';
+    document.getElementById('upFormWrap').style.display='';
+}
+function handleUploadDrop(ev){
+    ev.preventDefault();
+    ev.currentTarget.classList.remove('drag');
+    const files = ev.dataTransfer && ev.dataTransfer.files;
+    handleUploadFiles(files);
+}
+function handleUploadFiles(files){
+    openUploadForm();
+    const list = document.getElementById('upFilesList');
+    if(!list) return;
+    if(!files || !files.length){ list.innerHTML=''; return; }
+    const chips = Array.from(files).map(f=>{
+        const kb = f.size ? (f.size>1048576 ? (f.size/1048576).toFixed(1)+' MB' : Math.max(1,Math.round(f.size/1024))+' KB') : '';
+        return `<span class="up-file-chip"><svg class="ic" style="width:14px;height:14px;"><use href="#i-upload"/></svg> ${escapeHtml(f.name)} ${kb?`· ${kb}`:''}</span>`;
+    }).join('');
+    list.innerHTML = `<div style="color:var(--green-bright);font-size:13px;margin-bottom:6px;">${files.length} arquivo(s) selecionado(s):</div>${chips}`;
+}
 
-    document.getElementById('downloadBtn').onclick = ()=>{
-        let link = document.createElement('a');
-        link.href = arquivo;
-        link.download = arquivo;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
 
+function detalhes(id){
+    const it = items.find(x=>x.id===id);
+    if(!it) return;
+    document.getElementById('titulo').innerText = it.titulo;
+    document.getElementById('desc').innerText = it.desc||'';
+    document.getElementById('size').innerText = it.size||'—';
+    document.getElementById('genre').innerText = it.genre||'—';
+    document.getElementById('mode').innerText = it.mode||'—';
+    document.getElementById('detailImg').src = it.thumb||'';
+    const dbtn = document.getElementById('downloadBtn');
+    if(it.link){
+        dbtn.style.display = '';
+        dbtn.onclick = ()=>{ window.open(it.link, '_blank', 'noopener'); };
+    } else { dbtn.style.display = 'none'; }
+    document.getElementById('detailExtras').innerHTML = renderExtras(it);
     showPage('detalhes');
 }
 
+function renderExtras(it){
+    let html = '';
+    const links = it.links||[];
+    if(links.length){
+        html += `<div class="extra-block"><h3><svg class="ic"><use href="#i-link"/></svg> Links adicionais</h3><div>`;
+        links.forEach(l=>{
+            html += `<a class="link-chip" href="${escapeAttr(l.url)}" target="_blank" rel="noopener"><svg class="ic" style="width:14px;height:14px;"><use href="#i-download"/></svg> ${escapeHtml(l.label||l.url)}</a>`;
+        });
+        html += `</div></div>`;
+    }
+    const servers = it.servers||[];
+    if(servers.length){
+        html += `<div class="extra-block"><h3><svg class="ic"><use href="#i-server"/></svg> Servidores</h3>`;
+        servers.forEach(s=>{
+            html += `<div class="server-box"><h4><svg class="ic"><use href="#i-server"/></svg> ${escapeHtml(s.name||'Servidor')}</h4>`;
+            (s.links||[]).forEach(l=>{
+                html += `<a class="link-chip" href="${escapeAttr(l.url)}" target="_blank" rel="noopener"><svg class="ic" style="width:14px;height:14px;"><use href="#i-link"/></svg> ${escapeHtml(l.label||l.url)}</a>`;
+            });
+            html += `</div>`;
+        });
+        html += `</div>`;
+    }
+    const iframes = it.iframes||[];
+    if(iframes.length){
+        html += `<div class="extra-block"><h3><svg class="ic"><use href="#i-code"/></svg> Conteúdo incorporado</h3>`;
+        iframes.forEach(f=>{
+            if(f.label) html += `<div class="iframe-label"><svg class="ic" style="width:12px;height:12px;"><use href="#i-code"/></svg> ${escapeHtml(f.label)}</div>`;
+            html += `<div class="iframe-wrap"><iframe src="${escapeAttr(f.url)}" allowfullscreen loading="lazy" referrerpolicy="no-referrer"></iframe></div>`;
+        });
+        html += `</div>`;
+    }
+    const shares = it.shares||[];
+    if(shares.length){
+        html += `<div class="extra-block"><h3><svg class="ic"><use href="#i-share"/></svg> Compartilhar</h3><div>`;
+        shares.forEach(l=>{
+            html += `<a class="link-chip" href="${escapeAttr(l.url)}" target="_blank" rel="noopener"><svg class="ic" style="width:14px;height:14px;"><use href="#i-share"/></svg> ${escapeHtml(l.label||l.url)}</a>`;
+        });
+        html += `</div></div>`;
+    }
+    return html;
+}
+
+/* ==== Drawer ==== */
+function openDrawer(){ document.getElementById('drawer').classList.add('show'); document.getElementById('drawerOverlay').classList.add('show'); }
+function closeDrawer(){ document.getElementById('drawer').classList.remove('show'); document.getElementById('drawerOverlay').classList.remove('show'); }
+
+/* ==== Category filter ==== */
+let currentCategory = null;
+function filterCategory(cat){
+    currentCategory = cat;
+    showPage('catalogo');
+    const grid = document.getElementById('catalogGrid');
+    const filtered = items.filter(i => (i.genre||'').toLowerCase() === cat);
+    grid.innerHTML = filtered.map(cardHTML).join('') || `<div class="empty-state" style="grid-column:1/-1;">Nenhum item na categoria "${escapeHtml(cat)}" ainda.</div>`;
+    document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active-cat'));
+}
+
+/* ==== Upload / auth stubs ==== */
+function submitUpload(){
+    const t = document.getElementById('upTitulo').value.trim();
+    const l = document.getElementById('upLink').value.trim();
+    if(!t||!l){ toast('Preencha título e link', true, 'x-circle'); return; }
+    toast('Sugestão enviada! Aguarde revisão.', false, 'check-circle');
+    ['upTitulo','upCat','upLink','upObs'].forEach(id=>document.getElementById(id).value='');
+}
+function doLogin(){
+    const u = document.getElementById('loginUser').value.trim();
+    if(!u){ toast('Informe usuário', true, 'x-circle'); return; }
+    toast('Login local ativado: '+u, false, 'check-circle');
+}
+function doRegister(){
+    const u = document.getElementById('regUser').value.trim();
+    if(!u){ toast('Informe usuário', true, 'x-circle'); return; }
+    toast('Conta criada localmente', false, 'check-circle');
+}
+
+
 function buscar(){
-
-    let input = document.getElementById('search').value.toLowerCase();
-
-    let cards = document.querySelectorAll('.card');
-
-    cards.forEach(card=>{
-
-        let texto = card.innerText.toLowerCase();
-
-        if(texto.includes(input)){
-            card.style.display='block';
-        }else{
-            card.style.display='none';
-        }
+    const q = document.getElementById('search').value.toLowerCase();
+    document.querySelectorAll('#lista .card').forEach(card=>{
+        card.style.display = card.innerText.toLowerCase().includes(q) ? 'flex' : 'none';
     });
 }
 
-function addItem(){
+function isAuthed(){ return sessionStorage.getItem(AUTH_KEY) === "1"; }
 
-    let nome = document.getElementById('nome').value;
-    let descricao = document.getElementById('descricao').value;
-    let link = document.getElementById('link').value;
-
-    if(nome === '' || descricao === '' || link === ''){
-        alert('Preencha todos os campos');
-        return;
+function openAdminGate(){
+    if(isAuthed()){ showPage('admin'); return; }
+    document.getElementById('adminModal').classList.add('show');
+    setTimeout(()=>{
+        document.querySelectorAll('#pinInputs input').forEach(i=>i.value='');
+        document.querySelectorAll('#pinInputs input')[0].focus();
+    },50);
+}
+/* Sempre pede o PIN novamente, mesmo se já autenticado (acesso via menu) */
+function requireAdminPin(){
+    sessionStorage.removeItem(AUTH_KEY);
+    document.getElementById('adminToggleBtn').classList.remove('active');
+    document.getElementById('adminBtnLabel').innerText = "ADMIN";
+    document.getElementById('adminModal').classList.add('show');
+    setTimeout(()=>{
+        document.querySelectorAll('#pinInputs input').forEach(i=>i.value='');
+        document.querySelectorAll('#pinInputs input')[0].focus();
+    },50);
+}
+function closeAdminGate(){ document.getElementById('adminModal').classList.remove('show'); }
+function verifyPin(){
+    const pin = [...document.querySelectorAll('#pinInputs input')].map(i=>i.value).join('');
+    const container = document.getElementById('pinInputs');
+    if(pin === ADMIN_PIN){
+        sessionStorage.setItem(AUTH_KEY,"1");
+        closeAdminGate();
+        toast("Bem-vindo, Admin!", false, "check-circle");
+        document.getElementById('adminToggleBtn').classList.add('active');
+        document.getElementById('adminBtnLabel').innerText = "ADMIN";
+        showPage('admin');
+    }else{
+        container.classList.add('error');
+        setTimeout(()=>container.classList.remove('error'),500);
+        document.querySelectorAll('#pinInputs input').forEach(i=>i.value='');
+        document.querySelectorAll('#pinInputs input')[0].focus();
+        toast("PIN incorreto", true, "x-circle");
     }
+}
+function adminLogout(){
+    sessionStorage.removeItem(AUTH_KEY);
+    document.getElementById('adminToggleBtn').classList.remove('active');
+    document.getElementById('adminBtnLabel').innerText = "ADMIN";
+    toast("Sessão encerrada", false, "lock");
+    showPage('home');
+}
 
-    let novo = `
-    <div class="card">
-    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1200&auto=format&fit=crop">
+document.querySelectorAll('#pinInputs input').forEach(inp=>{
+    inp.addEventListener('input', e=>{
+        e.target.value = e.target.value.replace(/\D/g,'');
+        const inputs = [...document.querySelectorAll('#pinInputs input')];
+        const i = Number(e.target.dataset.i);
+        if(e.target.value && i<3) inputs[i+1].focus();
+        if([...inputs].every(x=>x.value)) verifyPin();
+    });
+    inp.addEventListener('keydown', e=>{
+        const inputs = [...document.querySelectorAll('#pinInputs input')];
+        const i = Number(e.target.dataset.i);
+        if(e.key==='Backspace' && !e.target.value && i>0) inputs[i-1].focus();
+        if(e.key==='Enter') verifyPin();
+    });
+});
+document.getElementById('adminModal').addEventListener('click', e=>{
+    if(e.target.id==='adminModal') closeAdminGate();
+});
 
-    <div class="card-content">
-    <h3>${nome}</h3>
+function switchTab(name){
+    document.querySelectorAll('.admin-tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===name));
+    document.querySelectorAll('.admin-panel').forEach(p=>p.classList.toggle('active', p.id===`tab-${name}`));
+    if(name==='manage') renderItemList();
+}
 
-    <p>${descricao}</p>
+/* ==== Dynamic form state ==== */
+let dynLinks = [], dynServers = [], dynIframes = [], dynShares = [];
 
-    <span class="tag">NOVO</span>
+function renderDynLinks(){
+    const el = document.getElementById('linksList');
+    el.innerHTML = dynLinks.map((l,i)=>`
+        <div class="dyn-item">
+            <button type="button" class="remove-x" onclick="removeLink(${i})"><svg class="ic"><use href="#i-x"/></svg></button>
+            <div class="row2">
+                <div><label>Rótulo</label><input type="text" placeholder="Ex: Mediafire" value="${escapeAttr(l.label||'')}" oninput="dynLinks[${i}].label=this.value"></div>
+                <div><label>URL</label><input type="url" placeholder="https://..." value="${escapeAttr(l.url||'')}" oninput="dynLinks[${i}].url=this.value"></div>
+            </div>
+        </div>`).join('') || `<p style="font-size:12px;color:var(--text-dim);">Nenhum link adicional.</p>`;
+}
+function addLink(){ dynLinks.push({label:'',url:''}); renderDynLinks(); }
+function removeLink(i){ dynLinks.splice(i,1); renderDynLinks(); }
 
-    <br><br>
+function renderDynServers(){
+    const el = document.getElementById('serversList');
+    el.innerHTML = dynServers.map((s,i)=>`
+        <div class="dyn-item">
+            <button type="button" class="remove-x" onclick="removeServer(${i})"><svg class="ic"><use href="#i-x"/></svg></button>
+            <label>Nome do servidor</label>
+            <input type="text" placeholder="Ex: Servidor 1 / Espelho Brasil" value="${escapeAttr(s.name||'')}" oninput="dynServers[${i}].name=this.value">
+            <div class="sub-links">
+                <label style="margin-top:0;">Links do servidor</label>
+                ${(s.links||[]).map((l,j)=>`
+                    <div class="sub-link-row">
+                        <input type="text" placeholder="Rótulo" value="${escapeAttr(l.label||'')}" oninput="dynServers[${i}].links[${j}].label=this.value">
+                        <input type="url" placeholder="https://..." value="${escapeAttr(l.url||'')}" oninput="dynServers[${i}].links[${j}].url=this.value">
+                        <button type="button" class="btn-danger mini-btn" onclick="removeServerLink(${i},${j})"><svg class="ic"><use href="#i-trash"/></svg></button>
+                    </div>`).join('')}
+                <button type="button" class="btn-secondary mini-btn" onclick="addServerLink(${i})"><svg class="ic"><use href="#i-plus"/></svg> Link neste servidor</button>
+            </div>
+        </div>`).join('') || `<p style="font-size:12px;color:var(--text-dim);">Nenhum servidor.</p>`;
+}
+function addServer(){ dynServers.push({name:'',links:[{label:'',url:''}]}); renderDynServers(); }
+function removeServer(i){ dynServers.splice(i,1); renderDynServers(); }
+function addServerLink(i){ (dynServers[i].links=dynServers[i].links||[]).push({label:'',url:''}); renderDynServers(); }
+function removeServerLink(i,j){ dynServers[i].links.splice(j,1); renderDynServers(); }
 
-    <button onclick="detalhes('${nome}','${descricao}','${link}','Custom','Gamer','Offline')">
-    Download
-    </button>
+function renderDynIframes(){
+    const el = document.getElementById('iframesList');
+    el.innerHTML = dynIframes.map((f,i)=>`
+        <div class="dyn-item">
+            <button type="button" class="remove-x" onclick="removeIframe(${i})"><svg class="ic"><use href="#i-x"/></svg></button>
+            <label>Rótulo (opcional)</label>
+            <input type="text" placeholder="Ex: Player principal" value="${escapeAttr(f.label||'')}" oninput="dynIframes[${i}].label=this.value">
+            <label>URL da iframe</label>
+            <input type="url" placeholder="https://www.youtube.com/embed/... ou drive/preview" value="${escapeAttr(f.url||'')}" oninput="dynIframes[${i}].url=this.value">
+        </div>`).join('') || `<p style="font-size:12px;color:var(--text-dim);">Nenhum iframe.</p>`;
+}
+function addIframe(){ dynIframes.push({label:'',url:''}); renderDynIframes(); }
+function removeIframe(i){ dynIframes.splice(i,1); renderDynIframes(); }
 
-    </div>
-    </div>
-    `;
+function renderDynShares(){
+    const el = document.getElementById('sharesList');
+    el.innerHTML = dynShares.map((l,i)=>`
+        <div class="dyn-item">
+            <button type="button" class="remove-x" onclick="removeShare(${i})"><svg class="ic"><use href="#i-x"/></svg></button>
+            <div class="row2">
+                <div><label>Rótulo</label><input type="text" placeholder="Ex: WhatsApp / Telegram" value="${escapeAttr(l.label||'')}" oninput="dynShares[${i}].label=this.value"></div>
+                <div><label>URL</label><input type="url" placeholder="https://..." value="${escapeAttr(l.url||'')}" oninput="dynShares[${i}].url=this.value"></div>
+            </div>
+        </div>`).join('') || `<p style="font-size:12px;color:var(--text-dim);">Nenhum link de compartilhamento.</p>`;
+}
+function addShare(){ dynShares.push({label:'',url:''}); renderDynShares(); }
+function removeShare(i){ dynShares.splice(i,1); renderDynShares(); }
 
-    document.getElementById('
-```
+function renderAllDyn(){ renderDynLinks(); renderDynServers(); renderDynIframes(); renderDynShares(); }
+
+function resetForm(){
+    ['editId','fTitulo','fThumb','fDesc','fLink','fSize','fMode','fTags'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('fGenre').value = 'jogos';
+    updateSubcats('');
+    document.getElementById('formTitleText').innerText = "Adicionar Novo Conteúdo";
+    dynLinks = []; dynServers = []; dynIframes = []; dynShares = [];
+    renderAllDyn();
+}
+function cleanArr(a){ return a.filter(x=>x && (x.url||x.label||(x.links&&x.links.length))); }
+function saveItem(){
+    const editId = document.getElementById('editId').value;
+    const data = {
+        titulo: document.getElementById('fTitulo').value.trim(),
+        thumb: document.getElementById('fThumb').value.trim() || "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1200&auto=format&fit=crop",
+        desc: document.getElementById('fDesc').value.trim(),
+        link: document.getElementById('fLink').value.trim(),
+        size: document.getElementById('fSize').value.trim() || "—",
+        genre: document.getElementById('fGenre').value.trim() || "jogos",
+        subcat: document.getElementById('fSubcat').value.trim(),
+        mode: document.getElementById('fMode').value.trim() || "Offline",
+        tags: document.getElementById('fTags').value.split(',').map(s=>s.trim()).filter(Boolean),
+        links: cleanArr(dynLinks),
+        servers: cleanArr(dynServers).map(s=>({name:s.name,links:cleanArr(s.links||[])})),
+        iframes: cleanArr(dynIframes),
+        shares: cleanArr(dynShares)
+    };
+    if(!data.titulo){ toast("Informe pelo menos o título", true, "x-circle"); return; }
+    if(!data.link && !data.links.length && !data.servers.length && !data.iframes.length){
+        toast("Adicione ao menos um link, servidor ou iframe", true, "x-circle"); return;
+    }
+    if(editId){
+        const i = items.findIndex(x=>x.id===Number(editId));
+        if(i>-1) items[i] = {...items[i], ...data};
+        toast("Conteúdo atualizado", false, "check-circle");
+    }else{
+        items.unshift({id: nextId(), ...data});
+        toast("Conteúdo adicionado", false, "check-circle");
+    }
+    saveItems();
+    renderCatalog();
+    renderItemList();
+    resetForm();
+}
+function editItem(id){
+    const it = items.find(x=>x.id===id);
+    if(!it) return;
+    document.getElementById('editId').value = it.id;
+    document.getElementById('fTitulo').value = it.titulo||'';
+    document.getElementById('fThumb').value = it.thumb||'';
+    document.getElementById('fDesc').value = it.desc||'';
+    document.getElementById('fLink').value = it.link||'';
+    document.getElementById('fSize').value = it.size||'';
+    document.getElementById('fGenre').value = it.genre||'jogos';
+    updateSubcats(it.subcat||'');
+    document.getElementById('fMode').value = it.mode||'';
+    document.getElementById('fTags').value = (it.tags||[]).join(', ');
+    dynLinks = JSON.parse(JSON.stringify(it.links||[]));
+    dynServers = JSON.parse(JSON.stringify(it.servers||[]));
+    dynIframes = JSON.parse(JSON.stringify(it.iframes||[]));
+    dynShares = JSON.parse(JSON.stringify(it.shares||[]));
+    renderAllDyn();
+    document.getElementById('formTitleText').innerText = "Editando: " + it.titulo;
+    switchTab('add');
+    window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function deleteItem(id){
+    if(!confirm("Excluir este jogo do catálogo?")) return;
+    items = items.filter(x=>x.id!==id);
+    saveItems();
+    renderCatalog();
+    renderItemList();
+    toast("Jogo removido", false, "trash");
+}
+function renderItemList(){
+    const el = document.getElementById('itemList');
+    if(items.length===0){ el.innerHTML = `<div class="empty-state">Nenhum jogo no catálogo</div>`; return; }
+    el.innerHTML = items.map(it=>`
+        <div class="item-row">
+            <img class="item-thumb" src="${escapeAttr(it.thumb)}" alt="">
+            <div class="item-info">
+                <h4>${escapeHtml(it.titulo)}</h4>
+                <small>${escapeHtml(it.genre||'—')} · ${escapeHtml(it.size||'—')}</small>
+            </div>
+            <div class="item-actions">
+                <button class="btn-secondary" onclick="editItem(${it.id})" title="Editar"><svg class="ic"><use href="#i-edit"/></svg></button>
+                <button class="btn-danger" onclick="deleteItem(${it.id})" title="Excluir"><svg class="ic"><use href="#i-trash"/></svg></button>
+            </div>
+        </div>
+    `).join('');
+}
+function updateStats(){
+    document.getElementById('statTotal').innerText = items.length;
+    const cats = new Set(items.map(i=>i.genre).filter(Boolean));
+    document.getElementById('statCats').innerText = cats.size;
+    const size = new Blob([JSON.stringify(items)]).size;
+    document.getElementById('statSize').innerText = size<1024 ? size+'b' : (size/1024).toFixed(1)+'kb';
+}
+
+function exportBackup(){
+    const blob = new Blob([JSON.stringify({app:"KAWE",version:1,exportedAt:new Date().toISOString(),items},null,2)],{type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `kawe-backup-${Date.now()}.json`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast("Backup exportado", false, "download");
+}
+function importBackup(){
+    const file = document.getElementById('importFile').files[0];
+    if(!file){ toast("Selecione um arquivo", true, "x-circle"); return; }
+    const reader = new FileReader();
+    reader.onload = e=>{
+        try{
+            const data = JSON.parse(e.target.result);
+            const list = Array.isArray(data) ? data : data.items;
+            if(!Array.isArray(list)) throw new Error("Formato inválido");
+            if(!confirm(`Restaurar ${list.length} jogos? Isso substitui o catálogo atual.`)) return;
+            items = list.map((it,idx)=>({id: it.id||idx+1, ...it}));
+            saveItems();
+            renderCatalog();
+            renderItemList();
+            toast("Backup restaurado", false, "check-circle");
+        }catch(err){
+            toast("Arquivo inválido: "+err.message, true, "x-circle");
+        }
+    };
+    reader.readAsText(file);
+}
+function wipeAll(){
+    if(!confirm("APAGAR TODOS os jogos? Esta ação é irreversível.")) return;
+    if(!confirm("Tem certeza absoluta?")) return;
+    items = [];
+    saveItems();
+    renderCatalog();
+    renderItemList();
+    toast("Catálogo apagado", false, "trash");
+}
+function resetDefaults(){
+    if(!confirm("Restaurar o catálogo padrão? Isso substitui os jogos atuais.")) return;
+    items = [...DEFAULT_ITEMS];
+    saveItems();
+    renderCatalog();
+    renderItemList();
+    toast("Padrão restaurado", false, "refresh");
+}
+
+let toastTimer;
+function toast(msg, danger=false, icon="check-circle"){
+    const el = document.getElementById('toast');
+    el.innerHTML = `<svg class="ic"><use href="#i-${icon}"/></svg> ${escapeHtml(msg)}`;
+    el.classList.toggle('danger', danger);
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>el.classList.remove('show'), 2600);
+}
+
+loadItems();
+renderCatalog();
+updateSubcats('');
+renderAllDyn();
+if(isAuthed()){
+    document.getElementById('adminToggleBtn').classList.add('active');
+    document.getElementById('adminBtnLabel').innerText = "ADMIN";
+}
+
+/* ============ USERS DATABASE ============ */
+const USERS_KEY = "kawe_users_v1";
+const CURRENT_USER_KEY = "kawe_current_user";
+const GATE_KEY = "kawe_gate_passed";
+
+function loadUsers(){ try{ return JSON.parse(localStorage.getItem(USERS_KEY)||"[]"); }catch(e){ return []; } }
+function saveUsers(list){ localStorage.setItem(USERS_KEY, JSON.stringify(list)); }
+function currentUser(){ try{ return JSON.parse(sessionStorage.getItem(CURRENT_USER_KEY)||"null"); }catch(e){ return null; } }
+function setCurrentUser(u){ if(u) sessionStorage.setItem(CURRENT_USER_KEY, JSON.stringify(u)); else sessionStorage.removeItem(CURRENT_USER_KEY); }
+
+/* ============ INTRO / WARNING / LOGIN FLOW ============ */
+function runIntros(){
+    if(sessionStorage.getItem(GATE_KEY)==="1"){ return; }
+    const i1 = document.getElementById('intro1');
+    const i2 = document.getElementById('intro2');
+    const warn = document.getElementById('warnScreen');
+    document.body.style.overflow='hidden';
+    i1.classList.add('show');
+    setTimeout(()=>{ i1.classList.remove('show'); i2.classList.add('show'); }, 2200);
+    setTimeout(()=>{ i2.classList.remove('show'); warn.classList.add('show'); }, 4400);
+}
+function acceptWarning(){
+    document.getElementById('warnScreen').classList.remove('show');
+    if(currentUser()){ finishGate(); return; }
+    document.getElementById('loginGate').classList.add('show');
+}
+function rejectWarning(){
+    document.body.innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#020402;color:#8fbf9a;font-family:Inter,sans-serif;padding:40px;text-align:center;"><div><h1 style="color:#22c55e;font-family:\'Space Grotesk\',sans-serif;font-size:32px;margin-bottom:12px;">Até logo!</h1><p>Você optou por sair. Pode fechar esta aba com segurança.</p></div></div>';
+}
+function toggleInfo(id){
+    document.querySelectorAll('.warn-info-panel').forEach(p=>{ if(p.id!==id) p.classList.remove('show'); });
+    document.getElementById(id).classList.toggle('show');
+}
+function switchLoginTab(name){
+    document.querySelectorAll('.login-tab').forEach(t=>t.classList.toggle('active', t.dataset.ltab===name));
+    document.querySelectorAll('.login-form').forEach(f=>f.classList.toggle('active', f.id===`lform-${name}`));
+}
+function finishGate(){
+    sessionStorage.setItem(GATE_KEY,"1");
+    document.getElementById('loginGate').classList.remove('show');
+    document.body.style.overflow='';
+}
+function gateLogin(){
+    const u = document.getElementById('gateLoginUser').value.trim();
+    const p = document.getElementById('gateLoginPass').value;
+    if(!u||!p){ toast("Preencha usuário e senha", true, "x-circle"); return; }
+    const users = loadUsers();
+    const found = users.find(x=>(x.user.toLowerCase()===u.toLowerCase()||x.email.toLowerCase()===u.toLowerCase()) && x.pass===p);
+    if(!found){ toast("Usuário ou senha incorretos", true, "x-circle"); return; }
+    if(found.banned){ toast("Esta conta está banida", true, "x-circle"); return; }
+    found.lastLogin = new Date().toISOString();
+    saveUsers(users);
+    setCurrentUser({user:found.user,email:found.email});
+    toast("Bem-vindo, "+found.user+"!", false, "check-circle");
+    finishGate();
+}
+function gateRegister(){
+    const u = document.getElementById('gateRegUser').value.trim();
+    const e = document.getElementById('gateRegEmail').value.trim();
+    const p = document.getElementById('gateRegPass').value;
+    if(!u||!e||!p){ toast("Preencha todos os campos", true, "x-circle"); return; }
+    if(p.length<6){ toast("Senha mínima: 6 caracteres", true, "x-circle"); return; }
+    const users = loadUsers();
+    if(users.some(x=>x.user.toLowerCase()===u.toLowerCase())){ toast("Usuário já existe", true, "x-circle"); return; }
+    if(users.some(x=>x.email.toLowerCase()===e.toLowerCase())){ toast("Email já cadastrado", true, "x-circle"); return; }
+    const newUser = {id:Date.now(), user:u, email:e, pass:p, createdAt:new Date().toISOString(), lastLogin:new Date().toISOString(), banned:false, provider:"local"};
+    users.push(newUser);
+    saveUsers(users);
+    setCurrentUser({user:u,email:e});
+    toast("Conta criada! Bem-vindo, "+u, false, "check-circle");
+    finishGate();
+}
+function socialLogin(provider){
+    const u = "user_"+provider.toLowerCase()+"_"+Math.floor(Math.random()*9999);
+    const e = u+"@"+provider.toLowerCase()+".com";
+    const users = loadUsers();
+    let existing = users.find(x=>x.provider===provider && x.user===u);
+    if(!existing){
+        existing = {id:Date.now(), user:u, email:e, pass:"", createdAt:new Date().toISOString(), lastLogin:new Date().toISOString(), banned:false, provider:provider};
+        users.push(existing); saveUsers(users);
+    }
+    if(existing.banned){ toast("Conta banida", true, "x-circle"); return; }
+    setCurrentUser({user:existing.user,email:existing.email});
+    toast("Login com "+provider+" simulado", false, "check-circle");
+    finishGate();
+}
+function continueAsGuest(){
+    setCurrentUser({user:"Visitante",email:"",guest:true});
+    toast("Modo visitante ativado", false, "check-circle");
+    finishGate();
+}
+
+/* Hijack existing doLogin/doRegister to also save into users DB */
+const _origDoLogin = doLogin, _origDoRegister = doRegister;
+doLogin = function(){
+    const u = document.getElementById('loginUser').value.trim();
+    const p = document.getElementById('loginPass').value;
+    if(!u){ toast('Informe usuário', true, 'x-circle'); return; }
+    const users = loadUsers();
+    const found = users.find(x=>(x.user.toLowerCase()===u.toLowerCase()||x.email.toLowerCase()===u.toLowerCase()) && x.pass===p);
+    if(found){
+        if(found.banned){ toast("Conta banida", true, "x-circle"); return; }
+        found.lastLogin = new Date().toISOString(); saveUsers(users);
+        setCurrentUser({user:found.user,email:found.email});
+        toast("Login: "+found.user, false, "check-circle");
+    } else { toast('Usuário/senha inválidos', true, 'x-circle'); }
+};
+doRegister = function(){
+    const u = document.getElementById('regUser').value.trim();
+    const e = document.getElementById('regEmail').value.trim();
+    const p = document.getElementById('regPass').value;
+    if(!u||!e||!p){ toast('Preencha todos os campos', true, 'x-circle'); return; }
+    if(p.length<6){ toast('Senha mínima: 6 caracteres', true, 'x-circle'); return; }
+    const users = loadUsers();
+    if(users.some(x=>x.user.toLowerCase()===u.toLowerCase())){ toast('Usuário já existe', true, 'x-circle'); return; }
+    users.push({id:Date.now(),user:u,email:e,pass:p,createdAt:new Date().toISOString(),lastLogin:new Date().toISOString(),banned:false,provider:"local"});
+    saveUsers(users);
+    toast('Conta criada: '+u, false, 'check-circle');
+    ['regUser','regEmail','regPass'].forEach(id=>document.getElementById(id).value='');
+};
+
+/* ============ USERS ADMIN PANEL ============ */
+function renderUsersList(){
+    const el = document.getElementById('usersList');
+    if(!el) return;
+    const users = loadUsers();
+    document.getElementById('statUsers').innerText = users.length;
+    document.getElementById('statBanned').innerText = users.filter(u=>u.banned).length;
+    document.getElementById('statActive').innerText = users.filter(u=>!u.banned).length;
+    if(!users.length){ el.innerHTML = `<div class="empty-state">Nenhum usuário cadastrado ainda.</div>`; return; }
+    el.innerHTML = users.map(u=>{
+        const initial = (u.user||"?").charAt(0).toUpperCase();
+        const created = u.createdAt ? new Date(u.createdAt).toLocaleString('pt-BR') : '—';
+        const last = u.lastLogin ? new Date(u.lastLogin).toLocaleString('pt-BR') : '—';
+        return `<div class="user-row ${u.banned?'banned':''}">
+            <div class="user-avatar">${escapeHtml(initial)}</div>
+            <div class="user-info">
+                <h4>${escapeHtml(u.user)} ${u.banned?'<span class="user-badge banned">BANIDO</span>':'<span class="user-badge">ATIVO</span>'} <span class="user-badge">${escapeHtml(u.provider||'local')}</span></h4>
+                <small>📧 ${escapeHtml(u.email||'—')}</small>
+                <small>📅 Cadastro: ${escapeHtml(created)} · Último login: ${escapeHtml(last)}</small>
+            </div>
+            <div class="user-actions">
+                <button class="${u.banned?'':'btn-secondary'}" onclick="toggleBanUser(${u.id})">
+                    <svg class="ic"><use href="#i-${u.banned?'check':'lock'}"/></svg> ${u.banned?'Desbanir':'Banir'}
+                </button>
+                <button class="btn-danger" onclick="deleteUser(${u.id})">
+                    <svg class="ic"><use href="#i-trash"/></svg> Excluir
+                </button>
+            </div>
+        </div>`;
+    }).join('');
+}
+function toggleBanUser(id){
+    const users = loadUsers();
+    const u = users.find(x=>x.id===id); if(!u) return;
+    u.banned = !u.banned;
+    saveUsers(users); renderUsersList();
+    toast(u.banned?"Usuário banido":"Usuário desbanido", u.banned, u.banned?"lock":"check-circle");
+}
+function deleteUser(id){
+    if(!confirm("Excluir permanentemente este usuário?")) return;
+    let users = loadUsers();
+    users = users.filter(x=>x.id!==id);
+    saveUsers(users); renderUsersList();
+    toast("Usuário excluído", false, "trash");
+}
+
+/* Hook admin tab switch to render users list */
+const _origSwitchTab = switchTab;
+switchTab = function(name){
+    _origSwitchTab(name);
+    if(name==='users') renderUsersList();
+};
+
+/* Boot intros on page load */
+runIntros();
+
+</script>
+
+</body>
+</html>
