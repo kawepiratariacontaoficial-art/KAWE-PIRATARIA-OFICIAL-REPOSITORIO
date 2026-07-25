@@ -545,6 +545,36 @@ footer .ic{color:var(--green);width:16px;height:16px;}
 .user-actions{display:flex;gap:6px;flex-wrap:wrap;}
 .user-actions button{width:auto;padding:8px 12px;font-size:12px;}
 </style>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+  import { getDatabase } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBXgZyK0piX1UtRu8GCQM98G9CnsRLICLs",
+    authDomain: "kawe-pirataria-oficial.firebaseapp.com",
+    databaseURL: "https://kawe-pirataria-oficial-default-rtdb.firebaseio.com",
+    projectId: "kawe-pirataria-oficial",
+    storageBucket: "kawe-pirataria-oficial.firebasestorage.app",
+    messagingSenderId: "833385810179",
+    appId: "1:833385810179:web:c9445dfb7767566fce0136",
+    measurementId: "G-ZN4VYFW66J"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  window.firebaseApp = app;
+  try { window.firebaseAnalytics = getAnalytics(app); } catch(e) { console.warn("Analytics:", e.message); }
+  window.firebaseDB = getDatabase(app);
+  window.firebaseAuth = getAuth(app);
+  window.firebaseFirestore = getFirestore(app);
+  window.firebaseStorage = getStorage(app);
+  console.log("✅ Firebase inicializado:", app.name);
+</script>
 </head>
 
 <body>
