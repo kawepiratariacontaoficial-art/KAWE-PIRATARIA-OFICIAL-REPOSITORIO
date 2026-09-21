@@ -555,7 +555,7 @@ footer .ic{color:var(--green);width:16px;height:16px;}
   import { getDatabase, ref, get, set, update, push, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
   import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
   import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+  import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBXgZyK0piX1UtRu8GCQM98G9CnsRLICLs",
@@ -585,6 +585,20 @@ footer .ic{color:var(--green);width:16px;height:16px;}
     updatePath: async (path,data) => update(ref(window.firebaseDB,path),data),
     pushPath: async (path,data) => { const r=push(ref(window.firebaseDB,path)); await set(r,data); return r.key; },
     removePath: async (path) => remove(ref(window.firebaseDB,path)),
+    uploadFiles: async (files) => {
+      if(!window.firebaseCurrentUser) throw new Error('Faça login antes de enviar arquivos.');
+      const uid=window.firebaseCurrentUser.uid;
+      return Promise.all(Array.from(files||[]).map(async (file,i)=>{
+        const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+        const r=storageRef(window.firebaseStorage,`uploads/${uid}/${Date.now()}-${i}-${safe}`);
+        await uploadBytes(r,file);
+        return {name:file.name,size:file.size,type:file.type||'application/octet-stream',url:await getDownloadURL(r)};
+      }));
+    },
+    log: async (action,details={}) => {
+      if(!window.firebaseCurrentUser) return;
+      return set(ref(window.firebaseDB,'logs/'+Date.now()+'-'+Math.random().toString(36).slice(2,8)),{uid:window.firebaseCurrentUser.uid,action,details,createdAt:new Date().toISOString()});
+    },
     getCatalog: async () => (await get(ref(window.firebaseDB,'catalogo'))).val(),
     setCatalog: async (items) => set(ref(window.firebaseDB,'catalogo'), items),
     patchUser: async (uid,data) => update(ref(window.firebaseDB,'usuarios/'+uid), data),
@@ -1217,7 +1231,7 @@ async function syncCatalogFromFirebase(){
 function saveItems(){
     if(!requireWriteAccess()) return false;
     if(window.firebaseApi && window.firebaseCurrentUser && sessionStorage.getItem('kawe_role')==='admin' && window.firebaseCurrentUser.uid===AUTHORIZED_ADMIN_UID){
-        window.firebaseApi.setCatalog(items).then(()=>toast('Salvo no Firebase',false,'check-circle')).catch(e=>toast('Firebase recusou a gravação: '+e.message,true,'x-circle'));
+        window.firebaseApi.setCatalog(items).then(()=>{ window.firebaseApi.log('catalogo.salvo',{total:items.length}).catch(()=>{}); toast('Salvo no Firebase',false,'check-circle'); }).catch(e=>toast('Firebase recusou a gravação: '+e.message,true,'x-circle'));
     } else toast('Falha de autorização do Firebase',true,'alert');
     return true;
 }
@@ -1280,6 +1294,7 @@ function updateSubcats(preserve){
 }
 
 /* ==== Upload gate (dropzone) ==== */
+let pendingUploadFiles = [];
 function resetUploadGate(){
     const g = document.getElementById('uploadGate');
     const f = document.getElementById('upFormWrap');
@@ -1289,6 +1304,7 @@ function resetUploadGate(){
     if(f){ f.style.display='none'; }
     if(list){ list.innerHTML=''; }
     if(input){ input.value=''; }
+    pendingUploadFiles=[];
 }
 function openUploadForm(){
     document.getElementById('uploadGate').style.display='none';
@@ -1301,6 +1317,7 @@ function handleUploadDrop(ev){
     handleUploadFiles(files);
 }
 function handleUploadFiles(files){
+    pendingUploadFiles=Array.from(files||[]);
     openUploadForm();
     const list = document.getElementById('upFilesList');
     if(!list) return;
@@ -1397,22 +1414,12 @@ async function submitUpload(){
     if(!t||!l){ toast('Preencha título e link', true, 'x-circle'); return; }
     if(!window.firebaseCurrentUser){ toast('Entre com uma conta para enviar sugestões',true,'lock'); return; }
     try{
-      await window.firebaseApi.pushPath('sugestoes',{titulo:t,link:l,categoria:cat,observacao:obs,uid:window.firebaseCurrentUser.uid,email:window.firebaseCurrentUser.email||'',status:'pendente',createdAt:new Date().toISOString()});
-      toast('Sugestão enviada ao Firebase', false, 'check-circle');
+      const anexos = pendingUploadFiles.length ? await window.firebaseApi.uploadFiles(pendingUploadFiles) : [];
+      await window.firebaseApi.pushPath('sugestoes',{titulo:t,link:l,categoria:cat,observacao:obs,anexos,uid:window.firebaseCurrentUser.uid,email:window.firebaseCurrentUser.email||'',status:'pendente',createdAt:new Date().toISOString()});
+      toast(anexos.length ? 'Arquivos enviados e sugestão salva no Firebase' : 'Sugestão enviada ao Firebase', false, 'check-circle');
       ['upTitulo','upCat','upLink','upObs'].forEach(id=>document.getElementById(id).value='');
     }catch(e){ toast('Não foi possível enviar ao Firebase: '+e.message,true,'x-circle'); }
 }
-function doLogin(){
-    const u = document.getElementById('loginUser').value.trim();
-    if(!u){ toast('Informe usuário', true, 'x-circle'); return; }
-    toast('Login local ativado: '+u, false, 'check-circle');
-}
-function doRegister(){
-    const u = document.getElementById('regUser').value.trim();
-    if(!u){ toast('Informe usuário', true, 'x-circle'); return; }
-    toast('Conta criada localmente', false, 'check-circle');
-}
-
 
 function buscar(){
     const q = document.getElementById('search').value.toLowerCase();
@@ -1448,6 +1455,20 @@ function requireAdminPin(){
     },50);
 }
 function closeAdminGate(){ document.getElementById('adminModal').classList.remove('show'); }
+function firebaseAuthMessage(e){
+    const code=String(e?.code||'');
+    const map={
+      'auth/invalid-credential':'E-mail ou senha Firebase incorretos.',
+      'auth/invalid-login-credentials':'E-mail ou senha Firebase incorretos.',
+      'auth/user-not-found':'Usuário não encontrado no Firebase.',
+      'auth/wrong-password':'Senha Firebase incorreta.',
+      'auth/invalid-email':'E-mail inválido.',
+      'auth/too-many-requests':'Muitas tentativas. Aguarde e tente novamente.',
+      'auth/network-request-failed':'Falha de rede ao acessar o Firebase.',
+      'auth/user-disabled':'Esta conta Firebase está desativada.'
+    };
+    return map[code] || (e?.message || 'Não foi possível autenticar no Firebase.');
+}
 async function verifyPin(){
     const pin = [...document.querySelectorAll('#pinInputs input')].map(i=>i.value).join('');
     const email = document.getElementById('adminEmail').value.trim();
@@ -1457,22 +1478,25 @@ async function verifyPin(){
     if(pin !== ADMIN_PIN){ toast('PIN administrativo incorreto',true,'x-circle'); return; }
     if(!email || !uid || !password){ toast('Preencha e-mail, UID, senha e PIN',true,'x-circle'); return; }
     if(email.toLowerCase() !== AUTHORIZED_ADMIN_EMAIL){ toast('E-mail não autorizado para a Função Administradora',true,'x-circle'); return; }
+    if(uid !== AUTHORIZED_ADMIN_UID){ toast('UID não corresponde ao UID administrativo autorizado',true,'x-circle'); return; }
+    if(!window.firebaseApi){ toast('Firebase ainda está carregando. Aguarde um instante e tente novamente.',true,'alert'); return; }
     try{
         const cred = await window.firebaseApi.signIn(email,password);
+        window.firebaseCurrentUser = cred.user;
         if(uid !== AUTHORIZED_ADMIN_UID || !cred.user || cred.user.uid !== AUTHORIZED_ADMIN_UID){ await window.firebaseApi.signOut(); throw new Error('UID não autorizado para a Função Administradora'); }
-        if(!cred.user.emailVerified){ await window.firebaseApi.signOut(); toast('Verifique o e-mail da conta Firebase antes de entrar',true,'alert'); return; }
+        // O acesso administrativo é validado por e-mail, senha, UID autorizado e PIN; não depende de emailVerified.
         sessionStorage.setItem(AUTH_KEY,'1'); sessionStorage.setItem('kawe_role','admin');
         closeAdminGate(); document.getElementById('adminToggleBtn').classList.add('active');
         document.getElementById('adminBtnLabel').innerText='FUNÇÃO ADMINISTRADORA';
         showPage('admin'); document.querySelectorAll('#tab-add button, #tab-backup .btn-danger, #tab-backup .btn-secondary, #tab-social button').forEach(b=>b.disabled=false); await syncCatalogFromFirebase(); toast('Função Administradora ativada',false,'check-circle');
-    }catch(e){ container.classList.add('error'); setTimeout(()=>container.classList.remove('error'),500); toast('Falha no acesso Firebase: '+e.message,true,'x-circle'); }
+    }catch(e){ container.classList.add('error'); setTimeout(()=>container.classList.remove('error'),500); toast(firebaseAuthMessage(e),true,'x-circle'); }
 }
 function openModeratorGate(){ document.getElementById('moderatorModal').classList.add('show'); }
 function closeModeratorGate(){ document.getElementById('moderatorModal').classList.remove('show'); }
 async function verifyModerator(){
     const email=document.getElementById('moderatorEmail').value.trim(), password=document.getElementById('moderatorPassword').value;
     if(!email||!password){toast('Preencha e-mail e senha',true,'x-circle');return;}
-    try{ const cred=await window.firebaseApi.signIn(email,password); sessionStorage.setItem(AUTH_KEY,'1'); sessionStorage.setItem('kawe_role','moderator'); closeModeratorGate(); showPage('admin'); document.querySelectorAll('#tab-add button, #tab-backup button, #tab-social button').forEach(b=>b.disabled=true); toast('Função Moderadora ativada',false,'check-circle'); }
+    try{ const cred=await window.firebaseApi.signIn(email,password); window.firebaseCurrentUser=cred.user; sessionStorage.setItem(AUTH_KEY,'1'); sessionStorage.setItem('kawe_role','moderator'); closeModeratorGate(); showPage('admin'); document.querySelectorAll('#tab-add button, #tab-backup button, #tab-social button').forEach(b=>b.disabled=true); toast('Função Moderadora ativada',false,'check-circle'); }
     catch(e){toast('Falha no acesso Firebase: '+e.message,true,'x-circle');}
 }
 async function adminLogout(){
@@ -1787,13 +1811,13 @@ async function gateLogin(){
   const input=document.getElementById('gateLoginUser').value.trim(), p=document.getElementById('gateLoginPass').value;
   if(!input||!p){toast('Preencha e-mail e senha',true,'x-circle');return;}
   if(!input.includes('@')){toast('Use o e-mail da conta Firebase',true,'alert');return;}
-  try{const cred=await window.firebaseApi.signIn(input,p);const profile=(await window.firebaseApi.getPath('usuarios/'+cred.user.uid))||{};if(profile.banned){await window.firebaseApi.signOut();throw new Error('Esta conta está banida');}await saveProfile(cred.user,{provider:'email'});setCurrentUser({uid:cred.user.uid,user:cred.user.displayName||input.split('@')[0],email:cred.user.email});toast('Bem-vindo!',false,'check-circle');finishGate();}
+  try{const cred=await window.firebaseApi.signIn(input,p);window.firebaseCurrentUser=cred.user;const profile=(await window.firebaseApi.getPath('usuarios/'+cred.user.uid))||{};if(profile.banned){await window.firebaseApi.signOut();throw new Error('Esta conta está banida');}await saveProfile(cred.user,{provider:'email'});setCurrentUser({uid:cred.user.uid,user:cred.user.displayName||input.split('@')[0],email:cred.user.email});toast('Bem-vindo!',false,'check-circle');finishGate();}
   catch(e){toast('Login Firebase recusado: '+e.message,true,'x-circle');}
 }
 async function gateRegister(){
   const u=document.getElementById('gateRegUser').value.trim(),e=document.getElementById('gateRegEmail').value.trim(),p=document.getElementById('gateRegPass').value;
   if(!u||!e||!p){toast('Preencha todos os campos',true,'x-circle');return;} if(p.length<6){toast('Senha mínima: 6 caracteres',true,'x-circle');return;}
-  try{const cred=await window.firebaseApi.register(e,p,u);await saveProfile(cred.user,{displayName:u,user:u,provider:'email',banned:false});setCurrentUser({uid:cred.user.uid,user:u,email:e});toast('Conta criada no Firebase!',false,'check-circle');finishGate();}
+  try{const cred=await window.firebaseApi.register(e,p,u);window.firebaseCurrentUser=cred.user;await saveProfile(cred.user,{displayName:u,user:u,provider:'email',banned:false});setCurrentUser({uid:cred.user.uid,user:u,email:e});toast('Conta criada no Firebase!',false,'check-circle');finishGate();}
   catch(e){toast('Cadastro Firebase recusado: '+e.message,true,'x-circle');}
 }
 async function socialLogin(provider){toast('Login social exige provedor Firebase configurado; use e-mail e senha por enquanto.',true,'alert');}
@@ -1836,11 +1860,11 @@ function renderUsersList(){
 }
 async function toggleBanUser(uid){
     if(!requireWriteAccess()) return; const u=usersCache.find(x=>x.uid===uid); if(!u)return; u.banned=!u.banned;
-    await window.firebaseApi.updatePath('usuarios/'+uid,{banned:u.banned}); renderUsersList(); toast(u.banned?'Usuário banido':'Usuário desbanido',u.banned,u.banned?'lock':'check-circle');
+    await window.firebaseApi.updatePath('usuarios/'+uid,{banned:u.banned}); await window.firebaseApi.log(u.banned?'usuario.banido':'usuario.desbanido',{targetUid:uid}).catch(()=>{}); renderUsersList(); toast(u.banned?'Usuário banido':'Usuário desbanido',u.banned,u.banned?'lock':'check-circle');
 }
 async function deleteUser(uid){
     if(!requireWriteAccess() || !confirm('Excluir o perfil deste usuário do Realtime Database?')) return;
-    await window.firebaseApi.removePath('usuarios/'+uid); usersCache=usersCache.filter(x=>x.uid!==uid); renderUsersList(); toast('Usuário excluído do Firebase',false,'trash');
+    await window.firebaseApi.removePath('usuarios/'+uid); await window.firebaseApi.log('usuario.excluido',{targetUid:uid}).catch(()=>{}); usersCache=usersCache.filter(x=>x.uid!==uid); renderUsersList(); toast('Usuário excluído do Firebase',false,'trash');
 }
 
 /* Hook admin tab switch to render users list */
@@ -1892,7 +1916,7 @@ runIntros();
   function loadOff(){ return offCache; }
   function loadCus(){ return cusCache; }
   async function hydrateFlut(){ try{ const d=await window.firebaseApi.getPath('configuracoes/botoesFlutuantes'); offCache=Object.assign({},DEF,d||{}); cusCache=Array.isArray(offCache.custom)?offCache.custom:[]; renderFlut(); renderCustomList(); }catch(e){console.warn('Configurações Firebase indisponíveis:',e.message);} }
-  async function saveOff(d){ offCache={...offCache,...d}; await window.firebaseApi.setPath('configuracoes/botoesFlutuantes',{...offCache,custom:cusCache}); }
+  async function saveOff(d){ offCache={...offCache,...d}; await window.firebaseApi.setPath('configuracoes/botoesFlutuantes',{...offCache,custom:cusCache}); await window.firebaseApi.log('configuracoes.botoes_salvas').catch(()=>{}); }
   async function saveCus(a){ cusCache=a; await window.firebaseApi.setPath('configuracoes/botoesFlutuantes',{...offCache,custom:cusCache}); }
   function renderFlut(){
     const c = document.getElementById('flutContainer'); if(!c) return;
