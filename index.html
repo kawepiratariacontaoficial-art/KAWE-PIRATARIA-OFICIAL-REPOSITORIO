@@ -554,7 +554,7 @@ footer .ic{color:var(--green);width:16px;height:16px;}
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
   import { getDatabase, ref, get, set, update, push, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
   import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, addDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
   import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
   const firebaseConfig = {
@@ -576,33 +576,43 @@ footer .ic{color:var(--green);width:16px;height:16px;}
   window.firebaseFirestore = getFirestore(app);
   window.firebaseStorage = getStorage(app);
   window.firebaseReady = Promise.resolve({app,auth:window.firebaseAuth,db:window.firebaseDB});
+  const fsPath = path => {
+    if(path.startsWith('usuarios/')) return {col:'users',id:path.slice(9)};
+    if(path==='configuracoes/botoesFlutuantes') return {col:'site',id:'floatingButtons'};
+    return null;
+  };
+  const isAdmin = () => !!window.firebaseCurrentUser && window.firebaseCurrentUser.uid === 'hN7qNAVjfkfUwZKC8B1nbR20o193';
   window.firebaseApi = {
     signIn: (email,password) => signInWithEmailAndPassword(window.firebaseAuth,email,password),
     register: (email,password,displayName) => createUserWithEmailAndPassword(window.firebaseAuth,email,password).then(async cred => { if(displayName) await updateProfile(cred.user,{displayName}); return cred; }),
     signOut: () => signOut(window.firebaseAuth),
-    getPath: async (path) => (await get(ref(window.firebaseDB,path))).val(),
-    setPath: async (path,data) => set(ref(window.firebaseDB,path),data),
-    updatePath: async (path,data) => update(ref(window.firebaseDB,path),data),
-    pushPath: async (path,data) => { const r=push(ref(window.firebaseDB,path)); await set(r,data); return r.key; },
-    removePath: async (path) => remove(ref(window.firebaseDB,path)),
+    getPath: async (path) => { const m=fsPath(path); if(m) return (await getDoc(doc(window.firebaseFirestore,m.col,m.id))).data()||null; return (await get(ref(window.firebaseDB,path))).val(); },
+    setPath: async (path,data) => { const m=fsPath(path); if(m) return setDoc(doc(window.firebaseFirestore,m.col,m.id),data,{merge:true}); return set(ref(window.firebaseDB,path),data); },
+    updatePath: async (path,data) => { const m=fsPath(path); if(m) return setDoc(doc(window.firebaseFirestore,m.col,m.id),data,{merge:true}); return update(ref(window.firebaseDB,path),data); },
+    pushPath: async (path,data) => { if(path==='sugestoes') return (await addDoc(collection(window.firebaseFirestore,'suggestions'),data)).id; const r=push(ref(window.firebaseDB,path)); await set(r,data); return r.key; },
+    removePath: async (path) => { const m=fsPath(path); if(m) return deleteDoc(doc(window.firebaseFirestore,m.col,m.id)); return remove(ref(window.firebaseDB,path)); },
     uploadFiles: async (files) => {
       if(!window.firebaseCurrentUser) throw new Error('Faça login antes de enviar arquivos.');
       const uid=window.firebaseCurrentUser.uid;
       return Promise.all(Array.from(files||[]).map(async (file,i)=>{
         const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
-        const r=storageRef(window.firebaseStorage,`uploads/${uid}/${Date.now()}-${i}-${safe}`);
+        const r=storageRef(window.firebaseStorage,`attachments/${uid}/${Date.now()}-${i}-${safe}`);
         await uploadBytes(r,file);
         return {name:file.name,size:file.size,type:file.type||'application/octet-stream',url:await getDownloadURL(r)};
       }));
     },
     log: async (action,details={}) => {
       if(!window.firebaseCurrentUser) return;
-      return set(ref(window.firebaseDB,'logs/'+Date.now()+'-'+Math.random().toString(36).slice(2,8)),{uid:window.firebaseCurrentUser.uid,action,details,createdAt:new Date().toISOString()});
+      return addDoc(collection(window.firebaseFirestore,'adminAudit'),{uid:window.firebaseCurrentUser.uid,action,details,createdAt:new Date().toISOString()});
     },
-    getCatalog: async () => (await get(ref(window.firebaseDB,'catalogo'))).val(),
-    setCatalog: async (items) => set(ref(window.firebaseDB,'catalogo'), items),
-    patchUser: async (uid,data) => update(ref(window.firebaseDB,'usuarios/'+uid), data),
-    getUsers: async () => (await get(ref(window.firebaseDB,'usuarios'))).val()
+    getCatalog: async () => { const snap=await getDocs(collection(window.firebaseFirestore,'content')); if(!snap.empty) return snap.docs.map(d=>d.data()).sort((a,b)=>Number(a.id||0)-Number(b.id||0)); const legacy=(await get(ref(window.firebaseDB,'catalogo'))).val(); return Array.isArray(legacy)?legacy:(legacy&&typeof legacy==='object'?Object.values(legacy):[]); },
+    setCatalog: async (items) => {
+      if(!isAdmin()) throw new Error('Administrador não autenticado');
+      const col=collection(window.firebaseFirestore,'content'), existing=await getDocs(col), wanted=new Set(items.map(x=>String(x.id)));
+      const batch=writeBatch(window.firebaseFirestore); existing.docs.forEach(d=>{if(!wanted.has(d.id))batch.delete(d.ref)}); items.forEach(item=>batch.set(doc(window.firebaseFirestore,'content',String(item.id)),item,{merge:true})); await batch.commit();
+    },
+    patchUser: async (uid,data) => setDoc(doc(window.firebaseFirestore,'users',uid),data,{merge:true}),
+    getUsers: async () => { const snap=await getDocs(collection(window.firebaseFirestore,'users')); const out={}; snap.forEach(d=>out[d.id]=d.data()); return out; }
   };
   onAuthStateChanged(window.firebaseAuth, user => { window.firebaseCurrentUser = user || null; });
   console.log("✅ Firebase inicializado:", app.name);
@@ -1093,7 +1103,7 @@ footer .ic{color:var(--green);width:16px;height:16px;}
     </div>
 
     <div class="admin-panel" id="tab-backup">
-        <h3><svg class="ic"><use href="#i-save"/></svg> Backup & Restauração</h3><p style="color:var(--text-dim);font-size:12px;margin:8px 0 14px;">Fonte principal: Firebase Realtime Database. Firestore está desativado pelas regras atuais.</p>
+        <h3><svg class="ic"><use href="#i-save"/></svg> Backup & Restauração</h3><p style="color:var(--text-dim);font-size:12px;margin:8px 0 14px;">Fonte principal: Firestore. O Realtime Database fica reservado para estados ao vivo e migração legada.</p>
         <div class="backup-box">
             <h4><svg class="ic"><use href="#i-download"/></svg> Exportar Backup</h4>
             <p>Baixe um arquivo JSON com todos os jogos do catálogo. Guarde em local seguro.</p>
@@ -1231,7 +1241,7 @@ async function syncCatalogFromFirebase(){
 function saveItems(){
     if(!requireWriteAccess()) return false;
     if(window.firebaseApi && window.firebaseCurrentUser && sessionStorage.getItem('kawe_role')==='admin' && window.firebaseCurrentUser.uid===AUTHORIZED_ADMIN_UID){
-        window.firebaseApi.setCatalog(items).then(()=>{ window.firebaseApi.log('catalogo.salvo',{total:items.length}).catch(()=>{}); toast('Salvo no Firebase',false,'check-circle'); }).catch(e=>toast('Firebase recusou a gravação: '+e.message,true,'x-circle'));
+        window.firebaseApi.setCatalog(items).then(()=>{ window.firebaseApi.log('catalogo.salvo',{total:items.length}).catch(()=>{}); toast('Salvo no Firestore',false,'check-circle'); }).catch(e=>toast('Firebase recusou a gravação: '+e.message,true,'x-circle'));
     } else toast('Falha de autorização do Firebase',true,'alert');
     return true;
 }
@@ -1863,7 +1873,7 @@ async function toggleBanUser(uid){
     await window.firebaseApi.updatePath('usuarios/'+uid,{banned:u.banned}); await window.firebaseApi.log(u.banned?'usuario.banido':'usuario.desbanido',{targetUid:uid}).catch(()=>{}); renderUsersList(); toast(u.banned?'Usuário banido':'Usuário desbanido',u.banned,u.banned?'lock':'check-circle');
 }
 async function deleteUser(uid){
-    if(!requireWriteAccess() || !confirm('Excluir o perfil deste usuário do Realtime Database?')) return;
+    if(!requireWriteAccess() || !confirm('Excluir o perfil deste usuário do Firestore?')) return;
     await window.firebaseApi.removePath('usuarios/'+uid); await window.firebaseApi.log('usuario.excluido',{targetUid:uid}).catch(()=>{}); usersCache=usersCache.filter(x=>x.uid!==uid); renderUsersList(); toast('Usuário excluído do Firebase',false,'trash');
 }
 
