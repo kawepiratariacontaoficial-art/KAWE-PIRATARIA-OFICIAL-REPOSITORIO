@@ -760,7 +760,7 @@ body::after{content:'';position:fixed;top:0;left:50%;width:min(680px,90vw);heigh
     getPath: async (path) => { const m=fsPath(path); if(m) return (await getDoc(doc(window.firebaseFirestore,m.col,m.id))).data()||null; return (await get(ref(window.firebaseDB,path))).val(); },
     setPath: async (path,data) => { const m=fsPath(path); if(m) return setDoc(doc(window.firebaseFirestore,m.col,m.id),data,{merge:true}); return set(ref(window.firebaseDB,path),data); },
     updatePath: async (path,data) => { const m=fsPath(path); if(m) return setDoc(doc(window.firebaseFirestore,m.col,m.id),data,{merge:true}); return update(ref(window.firebaseDB,path),data); },
-    pushPath: async (path,data) => { if(path==='sugestoes') return (await addDoc(collection(window.firebaseFirestore,'suggestions'),data)).id; const r=push(ref(window.firebaseDB,path)); await set(r,data); return r.key; },
+    pushPath: async (path,data) => { if(path==='sugestoes'||path==='criadores'){ const payload={...data,source:path==='criadores'?'creator':'upload'}; return (await addDoc(collection(window.firebaseFirestore,'suggestions'),payload)).id; } const r=push(ref(window.firebaseDB,path)); await set(r,data); return r.key; },
     removePath: async (path) => { const m=fsPath(path); if(m) return deleteDoc(doc(window.firebaseFirestore,m.col,m.id)); return remove(ref(window.firebaseDB,path)); },
     uploadFiles: async (files) => {
       if(!window.firebaseCurrentUser) throw new Error('Faça login antes de enviar arquivos.');
